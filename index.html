@@ -14,7 +14,7 @@
     --border: #2c2738;
     --pink: #ed93b1;
     --pink-strong: #d4537e;
-    --purple: #af a9ec;
+    --purple: #afa9ec;
     --purple-strong: #7f77dd;
     --text: #f3f1f7;
     --text-soft: #b3aec2;
@@ -157,6 +157,24 @@
   .check-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-soft); margin-bottom: 10px; }
   .check-row input { accent-color: var(--pink-strong); width: 16px; height: 16px; }
 
+  .passif-count { font-size: 0.72rem; color: var(--text-mute); margin-top: 6px; }
+  .passif-list {
+    max-height: 230px; overflow-y: auto;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--panel-2); padding: 6px; margin-top: 8px;
+  }
+  .passif-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 7px 8px; border-radius: 8px; cursor: pointer;
+  }
+  .passif-item:hover { background: rgba(255,255,255,0.04); }
+  .passif-item input { accent-color: var(--pink-strong); width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
+  .passif-item input:disabled { opacity: 0.35; }
+  .passif-item.is-disabled { opacity: 0.4; cursor: not-allowed; }
+  .passif-item b { display: block; font-size: 0.85rem; font-weight: 500; }
+  .passif-item span { display: block; font-size: 0.72rem; color: var(--text-mute); margin-top: 1px; }
+  .passif-empty { text-align: center; font-size: 0.8rem; color: var(--text-mute); padding: 14px 0; }
+
   .total-card {
     display: flex; align-items: center; justify-content: space-between;
     background: var(--panel-2); border-radius: 12px; padding: 14px 16px;
@@ -269,22 +287,18 @@
           </select>
         </div>
         <div>
-          <label for="passifs">Nombre de passifs</label>
-          <select id="passifs">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4" selected>4</option>
-          </select>
+          <label for="niveau" style="display:flex; justify-content:space-between;">
+            <span>Niveau souhaité</span><span id="niveau-out">50</span>
+          </label>
+          <input type="range" id="niveau" min="1" max="60" value="50" step="1" style="margin-top:11px;" />
         </div>
       </div>
 
       <div style="margin-bottom:16px;">
-        <label for="niveau" style="display:flex; justify-content:space-between;">
-          <span>Niveau souhaité</span><span id="niveau-out">50</span>
-        </label>
-        <input type="range" id="niveau" min="1" max="60" value="50" step="1" />
+        <label for="passif-search">Passifs souhaités (jusqu'à 4)</label>
+        <input type="text" id="passif-search" placeholder="Rechercher un passif : vitesse, dégâts, défense..." />
+        <div class="passif-list" id="passif-list"></div>
+        <div class="passif-count" id="passif-count">0 / 4 sélectionnés</div>
       </div>
 
       <div class="row">
@@ -348,11 +362,166 @@
   // pour que les commandes soient postées automatiquement dans ton serveur.
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1538483271510392852/WBr5zBPTiEODeqU1n6-3Vhs_6MYXWe9cA7U73e0XVqpRRvbcng4ClNxQR24PSLUm8qXC";
 
+  // Liste des passifs disponibles (nom + effet résumé)
+  const PASSIFS = [
+    ["Main du Démon", "Vitesse de travail +90% · Chute MEN +15%"],
+    ["Traverse-Mondes", "Vitesse de déplacement +50% · Chute de satiété +15%"],
+    ["Dieu de la Destruction", "Attaque +40% · Défense +20% · PV max -50%"],
+    ["Sage Immortel", "Chute MEN ralentie +50% · Vitesse de travail -20%"],
+    ["Rempart Sacré", "Défense +50% · Attaque -30%"],
+    ["Lame du Jugement", "Attaque +50% · Défense -30%"],
+    ["Berceau Divin", "Chute de satiété ralentie +50% · PV -20%"],
+    ["Baby-sitter", "Production d'œufs +30% (ranch) · Vitesse d'éclosion +30%"],
+    ["Colère Divine", "Attaque +30% · Défense +5%"],
+    ["Corps Adamantin", "Défense +30% · Immunité recul · Immunité projections"],
+    ["Vigueur Éternelle", "Endurance max +75% (montures)"],
+    ["Feu Éternel", "Dégâts Feu +30% · Dégâts Foudre +30%"],
+    ["Inébranlable", "MEN diminue plus lentement +20%"],
+    ["Blindage", "Immunité aux dégâts explosifs"],
+    ["Anomalie", "Restauration PV +50% · Défense +25% · Immunité Poison/Brûlure"],
+    ["Immortel", "Vol de vie +5% · Restauration PV Pals +100% · Attaque +15%"],
+    ["Envahisseur", "Dégâts Ténèbres +30% · Dégâts Dragon +30%"],
+    ["Roi des Vagues", "Vitesse de déplacement +50% sur l'eau"],
+    ["Grand Prince", "Objets obtenus +100%"],
+    ["Légende", "Attaque +20% · Défense +20% · Vitesse +20%"],
+    ["Légèreté", "Sauts en monture +1"],
+    ["Chanceux", "Attaque +15% · Défense +15% · Vitesse de travail +20%"],
+    ["Trophée des Flots", "Dégâts Eau +20% · Dégâts Glace +20% · Défense +20%"],
+    ["Maîtrise de la Faim", "Satiété diminue plus lentement +20%"],
+    ["Maître Éleveur", "Capacité de travail +2"],
+    ["Maîtrise Exceptionnelle", "Vitesse de travail +75%"],
+    ["Sauveur", "Dégâts Non Élémentaires +30% · Dégâts Plante +30%"],
+    ["Sorcière", "Dégâts Ténèbres +30% · Dégâts Glace +30%"],
+    ["Marche Céleste", "Sauts en monture +2"],
+    ["Sprinteur", "Vitesse de déplacement +30%"],
+    ["Vampire", "Absorbe des dégâts en PV · Travaille la nuit"],
+    ["Coursier Marin", "Vitesse de déplacement +40% sur l'eau"],
+    ["Appliqué", "Vitesse de travail +50%"],
+    ["Corps Robuste", "Défense +20% · Immunité recul"],
+    ["Empereur Céleste", "Dégâts Non Élémentaires +30%"],
+    ["Nutritionniste", "Satiété diminue plus lentement +15%"],
+    ["Dragon Divin", "Dégâts Dragon +30%"],
+    ["Empereur Terrestre", "Dégâts Terre +30%"],
+    ["Apprenti Éleveur", "Capacité de travail +1"],
+    ["Féroce", "Attaque +20%"],
+    ["Empereur Enflammé", "Dégâts Feu +30%"],
+    ["Ange Médecin", "Régénération PV joueur +5%"],
+    ["Empereur Glacial", "Dégâts Glace +30%"],
+    ["Infatigable", "Endurance max +50% (montures)"],
+    ["Chef d'Abattage", "Capacité d'abattage +25%"],
+    ["Seigneur des Tempêtes", "Dégâts Foudre +30%"],
+    ["Seigneur des Mers", "Dégâts Eau +30%"],
+    ["Seigneur des Enfers", "Dégâts Ténèbres +30%"],
+    ["Chef d'Extraction", "Capacité d'extraction +25%"],
+    ["Motivateur", "Productivité du joueur +25%"],
+    ["Noble", "Montant des ventes +5%"],
+    ["Philanthrope", "Vitesse de production d'œufs +100%"],
+    ["Instructeur de Tir", "Vitesse de rechargement +4%"],
+    ["Coursier", "Vitesse de déplacement +20%"],
+    ["Sérénité", "Recharge des compétences -30% · Attaque +10%"],
+    ["Généreux", "Objets obtenus +50%"],
+    ["Divinité de la Forêt", "Dégâts Plante +30%"],
+    ["Stratège de Forteresse", "Défense du joueur +10%"],
+    ["Chef d'Assaut", "Attaque du joueur +10%"],
+    ["Guide de l'effort", "Consommation d'endurance -5%"],
+    ["Acharné", "MEN diminue plus lentement +15%"],
+    ["Poids Lourd", "Défense +20% · Immunité projections"],
+    ["Impulsif", "Attaque +30% · Vitesse de travail -50%"],
+    ["Anormal", "Dégâts Non Élémentaires -10%"],
+    ["Rentre-Dedans", "Attaque +10% · Défense -10%"],
+    ["Sang de Dragon", "Dégâts Dragon +10%"],
+    ["Protection Végétale", "Dégâts Plante -10%"],
+    ["Brave", "Attaque +10%"],
+    ["Condensateur", "Dégâts Foudre +10%"],
+    ["Lumineux", "Dégâts Ténèbres -10%"],
+    ["Sang Froid", "Dégâts Glace +10%"],
+    ["Vaniteux", "Vitesse de travail +10% · Défense -10%"],
+    ["Frugal", "Satiété diminue plus lentement +10%"],
+    ["Tueur de Dragons", "Dégâts Dragon -10%"],
+    ["Parasismique", "Dégâts Terre -10%"],
+    ["Belle Fourrure", "Montant des ventes +3%"],
+    ["Force de la Nature", "Endurance max +25% (montures)"],
+    ["Fragrance Boisée", "Dégâts Plante +10%"],
+    ["Peau dure", "Défense +10%"],
+    ["Sang Chaud", "Dégâts Glace -10%"],
+    ["Trouble-Fête", "Attaque +15% · Vitesse de travail -10%"],
+    ["Hydrophile", "Dégâts Eau +10%"],
+    ["Impatient", "Recharge des compétences -15%"],
+    ["Nocturne", "Travaille la nuit, ne dort pas"],
+    ["Isolant", "Dégâts Foudre -10%"],
+    ["Masochiste", "Défense +15% · Attaque -15%"],
+    ["Vif", "Vitesse de déplacement +10%"],
+    ["Organisme Inconnu", "Attaque +10% · Réduction Feu/Foudre 15%"],
+    ["Optimiste", "MEN diminue plus lentement +10%"],
+    ["Force Tellurique", "Dégâts Terre +10%"],
+    ["Pyromane", "Dégâts Feu +10%"],
+    ["Sadique", "Attaque +15% · Défense -15%"],
+    ["Sérieux", "Vitesse de travail +20%"],
+    ["Nage Fluide", "Vitesse de déplacement +30% sur l'eau"],
+    ["Esprit Zen", "Dégâts Non Élémentaires +10%"],
+    ["Bronzage Naturel", "Dégâts Feu -10%"],
+    ["Voile des Ténèbres", "Dégâts Ténèbres +10%"],
+    ["Imperméabilité", "Dégâts Eau -10%"],
+    ["Soumis", "Vitesse de travail +30% · Attaque -30%"],
+    ["Maladroit", "Vitesse de travail -10%"],
+    ["Lâche", "Attaque -10%"],
+    ["Vulnérable aux Coups", "Défense -10%"],
+    ["Tranquille", "Recharge des compétences allongée -15%"],
+    ["Glouton", "Satiété diminue rapidement +10%"],
+    ["Pitié", "Frappe sans tuer"],
+    ["Oiseau de Nuit", "Fait des siestes régulières"],
+    ["Miteux", "Montant des ventes -10%"],
+    ["Reclus", "Endurance max -25% (montures)"],
+    ["Mentalement Instable", "MEN diminue rapidement +10%"],
+    ["Estomac sans Fond", "Satiété diminue rapidement +15%"],
+    ["Soif de Destruction", "MEN diminue rapidement +15%"],
+    ["Os fragiles", "Défense -20%"],
+    ["Pacifiste", "Attaque -20%"],
+    ["Négligent", "Vitesse de travail -30%"]
+  ];
+  const MAX_PASSIFS = 4;
+  const PASSIF_PRICE = 10;
+  let selectedPassifs = [];
+
+  function renderPassifs(filter) {
+    const term = (filter || '').trim().toLowerCase();
+    const list = document.getElementById('passif-list');
+    const items = PASSIFS.filter(function (p) { return p[0].toLowerCase().indexOf(term) !== -1; });
+    if (items.length === 0) {
+      list.innerHTML = '<div class="passif-empty">Aucun passif ne correspond à cette recherche.</div>';
+      return;
+    }
+    list.innerHTML = items.map(function (p) {
+      const checked = selectedPassifs.indexOf(p[0]) !== -1;
+      const disabled = !checked && selectedPassifs.length >= MAX_PASSIFS;
+      return '<label class="passif-item' + (disabled ? ' is-disabled' : '') + '">'
+        + '<input type="checkbox" data-name="' + p[0].replace(/"/g, '&quot;') + '" ' + (checked ? 'checked ' : '') + (disabled ? 'disabled ' : '') + '/>'
+        + '<span><b>' + p[0] + '</b><span>' + p[1] + '</span></span>'
+        + '</label>';
+    }).join('');
+    list.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        const name = cb.getAttribute('data-name');
+        if (cb.checked) {
+          if (selectedPassifs.length < MAX_PASSIFS) selectedPassifs.push(name);
+        } else {
+          selectedPassifs = selectedPassifs.filter(function (n) { return n !== name; });
+        }
+        document.getElementById('passif-count').textContent = selectedPassifs.length + ' / ' + MAX_PASSIFS + ' sélectionnés';
+        renderPassifs(document.getElementById('passif-search').value);
+        calc();
+      });
+    });
+  }
+  document.getElementById('passif-search').addEventListener('input', function () {
+    renderPassifs(this.value);
+  });
+  renderPassifs('');
+
   const els = {
     pseudo: document.getElementById('pseudo'),
     espece: document.getElementById('espece'),
     sexe: document.getElementById('sexe'),
-    passifs: document.getElementById('passifs'),
     iv: document.getElementById('iv'),
     niveau: document.getElementById('niveau'),
     niveauOut: document.getElementById('niveau-out'),
@@ -372,7 +541,7 @@
 
   function calc() {
     let total = 40;
-    total += parseInt(els.passifs.value, 10) * 10;
+    total += selectedPassifs.length * PASSIF_PRICE;
     if (els.iv.checked) total += 15;
     total += Math.round(parseInt(els.niveau.value, 10) * 0.5);
     total += parseInt(els.ames.value, 10) * 8;
@@ -385,7 +554,7 @@
     return total;
   }
 
-  [els.passifs, els.iv, els.ames, els.etoiles, els.eveil, els.competences, els.element].forEach(function (el) {
+  [els.iv, els.ames, els.etoiles, els.eveil, els.competences, els.element].forEach(function (el) {
     el.addEventListener('change', calc);
   });
   els.niveau.addEventListener('input', function () {
@@ -408,12 +577,13 @@
     els.error.style.display = 'none';
 
     const total = calc();
+    const passifsText = selectedPassifs.length > 0 ? selectedPassifs.join(', ') : 'aucun';
     const summary = 'Nouvelle commande Ô Pal Parfait\\n'
       + 'Pseudo : ' + pseudo + '\\n'
       + 'Espèce : ' + espece + '\\n'
       + 'Sexe : ' + els.sexe.value + '\\n'
       + 'Niveau : ' + els.niveau.value + '\\n'
-      + 'Passifs : ' + els.passifs.value + '\\n'
+      + 'Passifs (' + selectedPassifs.length + '/4) : ' + passifsText + '\\n'
       + 'IV optimisées : ' + (els.iv.checked ? 'oui' : 'non') + '\\n'
       + 'Âmes : ' + els.ames.value + '\\n'
       + 'Étoiles : ' + els.etoiles.value + '\\n'
@@ -448,6 +618,10 @@
       els.form.reset();
       els.niveau.value = 50;
       els.niveauOut.textContent = '50';
+      selectedPassifs = [];
+      document.getElementById('passif-count').textContent = '0 / ' + MAX_PASSIFS + ' sélectionnés';
+      document.getElementById('passif-search').value = '';
+      renderPassifs('');
       calc();
     } catch (err) {
       els.manual.style.display = 'block';
