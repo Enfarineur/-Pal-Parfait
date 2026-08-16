@@ -226,7 +226,7 @@
     <span class="tag">Pals personnalisés</span>
     <span class="tag">Reproduction optimisée</span>
     <span class="tag">Pals de combat</span>
-    <span class="tag">Pals rares</span>
+    <span class="tag">Pals Shiny</span>
     <span class="tag">Pals compétitifs</span>
   </div>
 </header>
@@ -247,7 +247,7 @@
       <div class="item"><div class="dot">★</div><b>Étoiles</b><span>Niveau d'étoiles</span></div>
       <div class="item"><div class="dot">Év</div><b>Éveil</b><span>Éveil souhaité</span></div>
       <div class="item"><div class="dot">Co</div><b>Compétences</b><span>Au choix</span></div>
-      <div class="item"><div class="dot">Él</div><b>Élément</b><span>Élément / variante</span></div>
+      <div class="item"><div class="dot">Sh</div><b>Shiny</b><span>Variante shiny</span></div>
     </div>
   </section>
 
@@ -329,7 +329,7 @@
         <label style="margin-bottom:10px;">Options</label>
         <div class="check-row"><input type="checkbox" id="iv" checked /> <label for="iv" style="margin:0;">IV optimisées</label></div>
         <div class="check-row"><input type="checkbox" id="eveil" /> <label for="eveil" style="margin:0;">Éveil souhaité</label></div>
-        <div class="check-row"><input type="checkbox" id="element" /> <label for="element" style="margin:0;">Élément / variante rare</label></div>
+        <div class="check-row"><input type="checkbox" id="element" /> <label for="element" style="margin:0;">Pal Shiny</label></div>
       </div>
 
       <div id="error"></div>
@@ -686,7 +686,7 @@
       + '**Éveil :** ' + (els.eveil.checked ? 'Oui' : 'Non') + '\\n'
       + '**IV optimisées :** ' + (els.iv.checked ? 'Oui' : 'Non') + '\\n\\n'
       + '**Fruits de compétence (' + selectedFruits.length + '/3)**\\n' + fruitsList + '\\n\\n'
-      + '**Élément / variante rare :** ' + (els.element.checked ? 'Oui' : 'Non');
+      + '**Pal Shiny :** ' + (els.element.checked ? 'Oui' : 'Non');
 
     const manualSummary = 'Nouvelle commande — Ô Pal Parfait\\n\\n' + description + '\\n\\n**Total estimé : ' + total + ' D.C**';
 
