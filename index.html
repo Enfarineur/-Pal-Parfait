@@ -346,7 +346,7 @@
 
       <div id="confirm">Commande envoyée ! Vérifie qu'elle est bien arrivée dans le salon Discord.</div>
       <div id="manual">
-        <p>Texte de secours : si la commande n'apparaît pas dans Discord d'ici une minute, copie ce résumé et colle-le manuellement dans le salon des commandes :</p>
+        <p>Texte de secours : si la commande n'apparaît pas dans Discord d'ici une minute, copie ce résumé et colle-le manuellement dans le salon des commandes (le format garde sa mise en forme une fois collé dans Discord) :</p>
         <textarea id="manual-text" readonly></textarea>
       </div>
     </form>
@@ -672,24 +672,25 @@
     els.error.style.display = 'none';
 
     const total = calc();
-    const passifsText = selectedPassifs.length > 0 ? selectedPassifs.join(', ') : 'aucun';
-    const amesText = selectedAmes().length > 0 ? selectedAmes().join(', ') : 'aucune';
-    const fruitsText = selectedFruits.length > 0 ? selectedFruits.join(', ') : 'aucun';
-    const summary = 'Nouvelle commande Ô Pal Parfait\\n'
-      + 'Pseudo : ' + pseudo + '\\n'
-      + 'Espèce : ' + espece + '\\n'
-      + 'Sexe : ' + els.sexe.value + '\\n'
-      + 'Niveau : ' + els.niveau.value + '\\n'
-      + 'Passifs (' + selectedPassifs.length + '/4) : ' + passifsText + '\\n'
-      + 'IV optimisées : ' + (els.iv.checked ? 'oui' : 'non') + '\\n'
-      + 'Âmes : ' + amesText + '\\n'
-      + 'Étoiles : ' + els.etoiles.value + '\\n'
-      + 'Éveil : ' + (els.eveil.checked ? 'oui' : 'non') + '\\n'
-      + 'Fruits de compétence (' + selectedFruits.length + '/3) : ' + fruitsText + '\\n'
-      + 'Élément / variante rare : ' + (els.element.checked ? 'oui' : 'non') + '\\n'
-      + 'Total estimé : ' + total + ' D.C';
+    const passifsList = selectedPassifs.length > 0 ? selectedPassifs.map(function (n) { return '• ' + n; }).join('\\n') : '_Aucun_';
+    const amesList = selectedAmes().length > 0 ? selectedAmes().map(function (n) { return '• ' + n; }).join('\\n') : '_Aucune_';
+    const fruitsList = selectedFruits.length > 0 ? selectedFruits.map(function (n) { return '• ' + n; }).join('\\n') : '_Aucun_';
 
-    els.manualText.value = summary;
+    const description = '**Pseudo :** ' + pseudo + '\\n'
+      + '**Espèce :** ' + espece + '\\n'
+      + '**Sexe :** ' + els.sexe.value + '\\n'
+      + '**Niveau :** ' + els.niveau.value + '\\n\\n'
+      + '**Passifs (' + selectedPassifs.length + '/4)**\\n' + passifsList + '\\n\\n'
+      + '**Âmes**\\n' + amesList + '\\n\\n'
+      + '**Étoiles :** ' + els.etoiles.value + '\\n'
+      + '**Éveil :** ' + (els.eveil.checked ? 'Oui' : 'Non') + '\\n'
+      + '**IV optimisées :** ' + (els.iv.checked ? 'Oui' : 'Non') + '\\n\\n'
+      + '**Fruits de compétence (' + selectedFruits.length + '/3)**\\n' + fruitsList + '\\n\\n'
+      + '**Élément / variante rare :** ' + (els.element.checked ? 'Oui' : 'Non');
+
+    const manualSummary = 'Nouvelle commande — Ô Pal Parfait\\n\\n' + description + '\\n\\n**Total estimé : ' + total + ' D.C**';
+
+    els.manualText.value = manualSummary;
 
     if (DISCORD_WEBHOOK_URL.indexOf('COLLE_ICI') !== -1) {
       els.manual.style.display = 'block';
@@ -702,9 +703,18 @@
     // mode "no-cors" (la requête part bien, mais on ne peut pas vérifier le statut renvoyé).
     // On utilise FormData + payload_json, le format que Discord recommande pour les envois
     // depuis un navigateur : il évite que le Content-Type JSON soit altéré en no-cors.
+    // La commande est envoyée sous forme d'embed (encadré coloré) plutôt qu'un simple texte,
+    // pour rester lisible d'un coup d'œil dans le salon.
     try {
+      const embed = {
+        title: 'Nouvelle commande — Ô Pal Parfait',
+        color: 0xD4537E,
+        description: description,
+        footer: { text: 'Total estimé : ' + total + ' D.C' },
+        timestamp: new Date().toISOString()
+      };
       const formData = new FormData();
-      formData.append('payload_json', JSON.stringify({ content: summary }));
+      formData.append('payload_json', JSON.stringify({ embeds: [embed] }));
       await fetch(DISCORD_WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',
