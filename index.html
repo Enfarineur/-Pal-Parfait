@@ -433,12 +433,15 @@
     els.submit.textContent = 'Envoi...';
     // Discord bloque la lecture de la réponse depuis un navigateur (CORS) : on envoie en
     // mode "no-cors" (la requête part bien, mais on ne peut pas vérifier le statut renvoyé).
+    // On utilise FormData + payload_json, le format que Discord recommande pour les envois
+    // depuis un navigateur : il évite que le Content-Type JSON soit altéré en no-cors.
     try {
+      const formData = new FormData();
+      formData.append('payload_json', JSON.stringify({ content: summary }));
       await fetch(DISCORD_WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: summary })
+        body: formData
       });
       els.confirm.style.display = 'block';
       els.manual.style.display = 'block';
