@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ô Pal Parfait — Pals personnalisés sur commande</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #0f0d14;
@@ -21,12 +21,6 @@
     --text-mute: #79748c;
     --success: #97c459;
     --danger: #f09595;
-    --gold: #cba05e;
-    --gold-soft: rgba(203,160,94,0.35);
-    --cream: #f3e2e7;
-    --cream-2: #ecd3da;
-    --ink: #241d2c;
-    --ink-soft: #5c4f5e;
   }
   * { box-sizing: border-box; }
   body {
@@ -39,187 +33,105 @@
   }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
 
-  .hero-wrap { max-width: 1000px; margin: 20px auto 0; padding: 0 16px; }
   header.hero {
-    background:
-      radial-gradient(480px 220px at 12% 0%, rgba(127,119,221,0.20), transparent 65%),
-      radial-gradient(480px 220px at 88% 100%, rgba(212,83,126,0.16), transparent 65%),
-      linear-gradient(180deg, #1c1628 0%, #12101a 100%);
-    border: 1px solid var(--gold-soft);
-    border-radius: 22px;
-    padding: 1.6rem 20px;
+    background: linear-gradient(180deg, #1c1628 0%, #0f0d14 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 20px 2.5rem;
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 20px 50px -25px rgba(0,0,0,0.7);
-    display: grid;
-    grid-template-columns: 130px 1fr 130px;
-    align-items: center;
-    gap: 12px;
   }
-  @media (max-width: 640px) { header.hero { grid-template-columns: 1fr; padding: 1.4rem 16px 1.6rem; } }
-  .hero-mascot, .hero-orb {
-    display: flex; align-items: center; justify-content: center;
-    position: relative; z-index: 1;
-  }
-  .hero-mascot img { width: 100%; max-width: 130px; height: auto; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.5)); }
-  .hero-orb img { width: 100%; max-width: 110px; height: auto; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.5)); }
-  @media (max-width: 640px) { .hero-mascot, .hero-orb { display: none; } }
-  .hero-main { position: relative; z-index: 1; }
-  .ornament {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    color: var(--gold); margin-bottom: 10px; position: relative; z-index: 1;
-  }
-  .ornament svg { width: 20px; height: 20px; flex-shrink: 0; }
-  .ornament .line { width: 70px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-soft)); }
-  .ornament .line.r { background: linear-gradient(90deg, var(--gold-soft), transparent); }
-  h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 900;
-    font-optical-sizing: auto;
-    font-size: clamp(2rem, 6vw, 2.9rem);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 0 0 8px;
-    position: relative; z-index: 1;
-  }
-  h1 .accent { color: var(--pink); }
-  .tagline {
-    color: var(--text-soft); font-size: 0.95rem; margin: 0 0 20px; position: relative; z-index: 1;
-    font-style: italic;
-  }
-  .tags {
-    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-    gap: 6px 14px; position: relative; z-index: 1;
-  }
-  .tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 0.78rem;
-    color: var(--text-soft);
-    white-space: nowrap;
-  }
-  .tag svg { width: 14px; height: 14px; color: var(--gold); flex-shrink: 0; }
-  .tag + .tag::before {
+  header.hero::before {
     content: "";
-    display: inline-block;
-    width: 1px; height: 12px;
-    background: var(--gold-soft);
-    margin-right: 14px;
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 320px; height: 320px;
+    border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%;
+    background: radial-gradient(circle at 40% 35%, rgba(175,169,236,0.22), rgba(175,169,236,0) 70%);
+  }
+  .egg-mark {
+    width: 46px; height: 58px;
+    margin: 0 auto 14px;
+    border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+    background: linear-gradient(160deg, var(--purple-strong), var(--pink-strong));
+    position: relative;
+    z-index: 1;
+  }
+  h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 2.4rem;
+    margin: 0 0 6px;
+    letter-spacing: 0.5px;
+    position: relative; z-index: 1;
+  }
+  .tagline { color: var(--text-soft); font-size: 0.95rem; margin: 0 0 18px; position: relative; z-index: 1; }
+  .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; position: relative; z-index: 1; }
+  .tag {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
   }
 
-  section { padding: 2.5rem 0; }
+  section { padding: 2.5rem 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
   h2 {
-    font-family: 'Fraunces', serif;
-    font-weight: 700;
-    font-size: 1.5rem;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 1.3rem;
     text-align: center;
     margin: 0 0 6px;
   }
-  h2.on-dark { color: var(--text); }
-  .h2-flourish {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin: 0 0 4px;
-  }
-  .h2-flourish svg { width: 15px; height: 15px; color: var(--gold); }
   .sub { text-align: center; color: var(--text-soft); font-size: 0.9rem; margin: 0 0 20px; }
 
   .badge-full {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: fit-content; margin: 0 auto 26px;
-    font-family: 'Fredoka', sans-serif; font-weight: 600;
-    font-size: 0.78rem; padding: 9px 20px; border-radius: 999px;
-    background: var(--ink); color: var(--gold);
-    letter-spacing: 0.4px; text-transform: uppercase;
+    display: block; width: fit-content; margin: 0 auto 24px;
+    font-size: 0.75rem; padding: 6px 16px; border-radius: 999px;
+    background: rgba(212,83,126,0.15); color: var(--pink);
+    border: 1px solid rgba(212,83,126,0.35);
   }
-  .badge-full svg { width: 14px; height: 14px; }
-
-  /* --- Panneau "Pal personnalisé" façon fiche blush --- */
-  .panel-blush {
-    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
-    border-radius: 22px;
-    padding: 2.2rem 1.9rem;
-    box-shadow: 0 20px 45px -30px rgba(0,0,0,0.6);
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 10px 28px;
-    align-items: center;
-  }
-  @media (max-width: 760px) { .panel-blush { grid-template-columns: 1fr; } }
-  .panel-blush .panel-text { text-align: left; }
-  .panel-blush .h2-flourish { justify-content: flex-start; }
-  .panel-blush h2 { color: var(--ink); text-align: left; }
-  .panel-blush .h2-flourish svg { color: var(--pink-strong); }
-  .panel-blush .sub { color: var(--pink-strong); font-style: italic; font-weight: 500; text-align: left; margin-bottom: 18px; }
-  .panel-blush .badge-full { margin: 0 0 22px; }
-
-  .panel-pal {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px;
-  }
-  .panel-pal img { width: 100%; max-width: 280px; height: auto; }
-  .pal-ribbon {
-    background: linear-gradient(180deg, #241d2c, #171320);
-    color: var(--gold);
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    font-size: 0.72rem;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    padding: 8px 18px;
-    border-radius: 999px;
-    border: 1px solid var(--gold-soft);
-    white-space: nowrap;
-  }
-  @media (max-width: 760px) { .panel-pal { order: -1; } .panel-pal img { max-width: 200px; } }
 
   .criteria-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 18px 14px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
   }
-  .criteria-grid .item { display: flex; align-items: flex-start; gap: 10px; text-align: left; }
+  .criteria-grid .item { text-align: center; }
   .criteria-grid .item .dot {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: #fff;
-    box-shadow: inset 0 0 0 1px rgba(212,83,126,0.25);
+    width: 40px; height: 40px; margin: 0 auto 8px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    color: var(--pink-strong);
-    flex-shrink: 0;
+    color: var(--pink);
+    font-family: 'Fredoka', sans-serif; font-size: 1rem;
   }
-  .criteria-grid .item .dot svg { width: 18px; height: 18px; }
-  .criteria-grid .item b { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ink); }
-  .criteria-grid .item span { display: block; font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
+  .criteria-grid .item b { display: block; font-size: 0.85rem; font-weight: 500; }
+  .criteria-grid .item span { display: block; font-size: 0.72rem; color: var(--text-mute); margin-top: 2px; }
 
-  /* --- Étapes de commande --- */
   .steps {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    align-items: stretch;
-    counter-reset: step;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
   }
-  @media (max-width: 700px) { .steps { grid-template-columns: 1fr; } .steps .arrow { display: none; } }
   .step {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 16px;
-    position: relative;
   }
   .step .num {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--gold); color: var(--ink);
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--purple-strong); color: #17141f;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Fredoka', sans-serif;
-    font-size: 0.8rem; font-weight: 600; margin-bottom: 10px;
+    font-size: 0.75rem; font-weight: 600; margin-bottom: 10px;
   }
-  .step b { display: block; font-family: 'Fredoka', sans-serif; font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; }
+  .step b { display: block; font-size: 0.9rem; margin-bottom: 3px; }
   .step p { margin: 0; font-size: 0.8rem; color: var(--text-mute); }
-  .steps-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; }
-  @media (max-width: 700px) { .steps-row { grid-template-columns: 1fr; justify-items: center; } }
-  .arrow { color: var(--gold); opacity: 0.7; }
-  .arrow svg { width: 16px; height: 16px; }
-  @media (max-width: 700px) { .arrow svg { transform: rotate(90deg); } }
 
   form {
     background: var(--panel);
@@ -270,14 +182,11 @@
   }
   .total-card .label { font-size: 0.8rem; color: var(--text-soft); }
   .total-card .note { font-size: 0.7rem; color: var(--text-mute); }
-  .total-card { border: 1px solid var(--gold-soft); }
-  .total-card .amount { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.6rem; color: var(--pink); }
-
-  form { border-color: var(--gold-soft); }
+  .total-card .amount { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: var(--pink); }
 
   button#submit {
     width: 100%;
-    background: linear-gradient(120deg, var(--gold), var(--pink-strong));
+    background: linear-gradient(120deg, var(--purple-strong), var(--pink-strong));
     color: #17141f;
     border: none;
     border-radius: 10px;
@@ -309,75 +218,45 @@
 </head>
 <body>
 
-<div class="hero-wrap">
 <header class="hero">
-  <div class="hero-mascot"><img src="assets/chef-mascot.png" alt="Le chef Ô Pal Parfait" /></div>
-  <div class="hero-main">
-    <div class="ornament">
-      <span class="line"></span>
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14.5c-2.8 0-5.2 2-5.9 4.7-.2.9.6 1.8 1.5 1.6 1.3-.3 2.9-.5 4.4-.5s3.1.2 4.4.5c.9.2 1.7-.7 1.5-1.6-.7-2.7-3.1-4.7-5.9-4.7Z"/><circle cx="5.5" cy="11" r="2"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="7" r="2"/><circle cx="18.5" cy="11" r="2"/></svg>
-      <span class="line r"></span>
-    </div>
-    <h1>Ô Pal <span class="accent">Parfait</span></h1>
-    <p class="tagline">Votre fournisseur officiel de Pals personnalisés</p>
-    <div class="tags">
-      <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M5 10 7 4 10 8"/><path d="M19 10 17 4 14 8"/><circle cx="12" cy="14" r="7"/></svg>Pals personnalisés</span>
-      <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 14-5M20 12a8 8 0 0 1-14 5"/><path d="M15 4h3v3M9 20H6v-3"/></svg>Reproduction optimisée</span>
-      <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 3 21 9.5 9.5 21 3 14.5z"/><path d="M13 6l5 5"/></svg>Pals de combat</span>
-      <span class="tag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4z"/></svg>Pals rares</span>
-      <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8l3 3 5-6 5 6 3-3-2 10H6z"/></svg>Pals compétitifs</span>
-    </div>
+  <div class="egg-mark"></div>
+  <h1>Ô Pal Parfait</h1>
+  <p class="tagline">Votre fournisseur officiel de Pals personnalisés</p>
+  <div class="tags">
+    <span class="tag">Pals personnalisés</span>
+    <span class="tag">Reproduction optimisée</span>
+    <span class="tag">Pals de combat</span>
+    <span class="tag">Pals rares</span>
+    <span class="tag">Pals compétitifs</span>
   </div>
-  <div class="hero-orb"><img src="assets/pal-orb.png" alt="Sphère à Pal" /></div>
 </header>
-</div>
 
 <div class="wrap">
 
   <section>
-    <div class="panel-blush">
-      <div class="panel-text">
-      <div class="h2-flourish">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5z"/></svg>
-      </div>
-      <h2>Pal personnalisé</h2>
-      <p class="sub">Un Pal créé selon vos envies, vos besoins et votre style de jeu.</p>
-      <span class="badge-full">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14.5c-2.8 0-5.2 2-5.9 4.7-.2.9.6 1.8 1.5 1.6 1.3-.3 2.9-.5 4.4-.5s3.1.2 4.4.5c.9.2 1.7-.7 1.5-1.6-.7-2.7-3.1-4.7-5.9-4.7Z"/><circle cx="5.5" cy="11" r="2"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="7" r="2"/><circle cx="18.5" cy="11" r="2"/></svg>
-        100% personnalisable
-      </span>
-      <div class="criteria-grid">
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M5 10 7 4 10 8"/><path d="M19 10 17 4 14 8"/><circle cx="12" cy="14" r="7"/></svg></div><span><b>Espèce</b><span>Choisissez votre pal</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="14" r="5"/><path d="M17 3l4 4m0-4v4h-4M14 10l7-7"/></svg></div><span><b>Sexe</b><span>Mâle ou femelle</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5z"/></svg></div><span><b>Passifs</b><span>Sélectionnés selon vos critères</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 19V13M11 19V7M17 19v-9"/></svg></div><span><b>IV</b><span>Valeurs individuelles optimisées</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 15l6-6 6 6M6 20l6-6 6 6"/></svg></div><span><b>Niveau</b><span>Niveau souhaité</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1.5-1-2-1-3.5 2 1.5 3 4 3 6.5a5 5 0 0 1-10 0c0-6 4-7 5-12z"/></svg></div><span><b>Âmes</b><span>Âmes souhaitées</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.3l-5.5 4.8L18 21l-6-3.9L6 21l1.5-6.9L2 9.3l7.1-.4z"/></svg></div><span><b>Étoiles</b><span>Niveau d'étoiles</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3 3 3 8 0 18C9 13 9 6 12 3z"/><path d="M3 12c3-3 8-3 18 0"/></svg></div><span><b>Éveil</b><span>Éveil souhaité</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 14-5M20 12a8 8 0 0 1-14 5"/><path d="M15 4h3v3M9 20H6v-3"/></svg></div><span><b>Compétences</b><span>Compétences au choix</span></span></div>
-        <div class="item"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.5"/><path d="M12 3v18"/></svg></div><span><b>Élément</b><span>Élément / variante souhaitée</span></span></div>
-      </div>
-      </div>
-      <div class="panel-pal">
-        <img src="assets/pal-creature.png" alt="Exemple de Pal personnalisé" />
-        <span class="pal-ribbon">Votre Pal, vos règles</span>
-      </div>
+    <h2>Pal personnalisé</h2>
+    <p class="sub">Un Pal créé selon vos envies, vos besoins et votre style de jeu</p>
+    <span class="badge-full">100% personnalisable</span>
+    <div class="criteria-grid">
+      <div class="item"><div class="dot">Es</div><b>Espèce</b><span>Choisissez votre pal</span></div>
+      <div class="item"><div class="dot">Se</div><b>Sexe</b><span>Mâle ou femelle</span></div>
+      <div class="item"><div class="dot">Pa</div><b>Passifs</b><span>Selon vos critères</span></div>
+      <div class="item"><div class="dot">IV</div><b>IV</b><span>Valeurs optimisées</span></div>
+      <div class="item"><div class="dot">Ni</div><b>Niveau</b><span>Niveau souhaité</span></div>
+      <div class="item"><div class="dot">Âm</div><b>Âmes</b><span>Âmes souhaitées</span></div>
+      <div class="item"><div class="dot">★</div><b>Étoiles</b><span>Niveau d'étoiles</span></div>
+      <div class="item"><div class="dot">Év</div><b>Éveil</b><span>Éveil souhaité</span></div>
+      <div class="item"><div class="dot">Co</div><b>Compétences</b><span>Au choix</span></div>
+      <div class="item"><div class="dot">Él</div><b>Élément</b><span>Élément / variante</span></div>
     </div>
   </section>
 
   <section>
-    <div class="h2-flourish">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5z"/></svg>
-    </div>
-    <h2 class="on-dark">Comment commander ?</h2>
-    <div class="steps-row">
+    <h2>Comment commander ?</h2>
+    <div class="steps">
       <div class="step"><div class="num">1</div><b>Choisissez votre pal</b><p>Espèce et variante souhaitées</p></div>
-      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       <div class="step"><div class="num">2</div><b>Vos caractéristiques</b><p>Passifs, IV, niveau, compétences</p></div>
-      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       <div class="step"><div class="num">3</div><b>Préparation</b><p>Recherche et optimisation</p></div>
-      <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       <div class="step"><div class="num">4</div><b>Livraison</b><p>Remis directement en jeu</p></div>
     </div>
   </section>
