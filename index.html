@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ô Pal Parfait — Pals personnalisés sur commande</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f0d14;
+    --panel: #17141f;
+    --panel-2: #1e1a29;
+    --border: #2c2738;
+    --pink: #ed93b1;
+    --pink-strong: #d4537e;
+    --purple: #af a9ec;
+    --purple-strong: #7f77dd;
+    --text: #f3f1f7;
+    --text-soft: #b3aec2;
+    --text-mute: #79748c;
+    --success: #97c459;
+    --danger: #f09595;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    padding: 0 0 4rem;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+  header.hero {
+    background: linear-gradient(180deg, #1c1628 0%, #0f0d14 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 20px 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::before {
+    content: "";
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 320px; height: 320px;
+    border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%;
+    background: radial-gradient(circle at 40% 35%, rgba(175,169,236,0.22), rgba(175,169,236,0) 70%);
+  }
+  .egg-mark {
+    width: 46px; height: 58px;
+    margin: 0 auto 14px;
+    border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+    background: linear-gradient(160deg, var(--purple-strong), var(--pink-strong));
+    position: relative;
+    z-index: 1;
+  }
+  h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 2.4rem;
+    margin: 0 0 6px;
+    letter-spacing: 0.5px;
+    position: relative; z-index: 1;
+  }
+  .tagline { color: var(--text-soft); font-size: 0.95rem; margin: 0 0 18px; position: relative; z-index: 1; }
+  .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; position: relative; z-index: 1; }
+  .tag {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+  }
+
+  section { padding: 2.5rem 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 1.3rem;
+    text-align: center;
+    margin: 0 0 6px;
+  }
+  .sub { text-align: center; color: var(--text-soft); font-size: 0.9rem; margin: 0 0 20px; }
+
+  .badge-full {
+    display: block; width: fit-content; margin: 0 auto 24px;
+    font-size: 0.75rem; padding: 6px 16px; border-radius: 999px;
+    background: rgba(212,83,126,0.15); color: var(--pink);
+    border: 1px solid rgba(212,83,126,0.35);
+  }
+
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
+  }
+  .criteria-grid .item { text-align: center; }
+  .criteria-grid .item .dot {
+    width: 40px; height: 40px; margin: 0 auto 8px;
+    border-radius: 50%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--pink);
+    font-family: 'Fredoka', sans-serif; font-size: 1rem;
+  }
+  .criteria-grid .item b { display: block; font-size: 0.85rem; font-weight: 500; }
+  .criteria-grid .item span { display: block; font-size: 0.72rem; color: var(--text-mute); margin-top: 2px; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .step {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .step .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--purple-strong); color: #17141f;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 600; margin-bottom: 10px;
+  }
+  .step b { display: block; font-size: 0.9rem; margin-bottom: 3px; }
+  .step p { margin: 0; font-size: 0.8rem; color: var(--text-mute); }
+
+  form {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 0.8rem; color: var(--text-soft); margin-bottom: 6px; }
+  input[type="text"], select {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-family: inherit;
+  }
+  input[type="text"]:focus, select:focus, input[type="range"]:focus { outline: 2px solid var(--purple-strong); outline-offset: 2px; }
+  input[type="range"] { width: 100%; accent-color: var(--pink-strong); }
+  .check-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-soft); margin-bottom: 10px; }
+  .check-row input { accent-color: var(--pink-strong); width: 16px; height: 16px; }
+
+  .total-card {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--panel-2); border-radius: 12px; padding: 14px 16px;
+    margin: 6px 0 16px;
+  }
+  .total-card .label { font-size: 0.8rem; color: var(--text-soft); }
+  .total-card .note { font-size: 0.7rem; color: var(--text-mute); }
+  .total-card .amount { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: var(--pink); }
+
+  button#submit {
+    width: 100%;
+    background: linear-gradient(120deg, var(--purple-strong), var(--pink-strong));
+    color: #17141f;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button#submit:active { transform: scale(0.99); }
+
+  #error { display: none; font-size: 0.82rem; color: var(--danger); margin-bottom: 12px; }
+  #confirm {
+    display: none; margin-top: 16px; padding: 14px; border-radius: 10px;
+    background: rgba(151,196,89,0.12); border: 1px solid rgba(151,196,89,0.3);
+    color: var(--success); font-size: 0.85rem;
+  }
+  #manual {
+    display: none; margin-top: 16px;
+  }
+  #manual textarea {
+    width: 100%; min-height: 100px; background: var(--panel-2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 10px; padding: 10px; font-size: 0.82rem; font-family: inherit;
+  }
+  #manual p { font-size: 0.78rem; color: var(--text-mute); margin: 8px 0 6px; }
+
+  footer { text-align: center; padding: 2rem 20px 0; color: var(--text-mute); font-size: 0.78rem; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="egg-mark"></div>
+  <h1>Ô Pal Parfait</h1>
+  <p class="tagline">Votre fournisseur officiel de Pals personnalisés</p>
+  <div class="tags">
+    <span class="tag">Pals personnalisés</span>
+    <span class="tag">Reproduction optimisée</span>
+    <span class="tag">Pals de combat</span>
+    <span class="tag">Pals rares</span>
+    <span class="tag">Pals compétitifs</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>Pal personnalisé</h2>
+    <p class="sub">Un Pal créé selon vos envies, vos besoins et votre style de jeu</p>
+    <span class="badge-full">100% personnalisable</span>
+    <div class="criteria-grid">
+      <div class="item"><div class="dot">Es</div><b>Espèce</b><span>Choisissez votre pal</span></div>
+      <div class="item"><div class="dot">Se</div><b>Sexe</b><span>Mâle ou femelle</span></div>
+      <div class="item"><div class="dot">Pa</div><b>Passifs</b><span>Selon vos critères</span></div>
+      <div class="item"><div class="dot">IV</div><b>IV</b><span>Valeurs optimisées</span></div>
+      <div class="item"><div class="dot">Ni</div><b>Niveau</b><span>Niveau souhaité</span></div>
+      <div class="item"><div class="dot">Âm</div><b>Âmes</b><span>Âmes souhaitées</span></div>
+      <div class="item"><div class="dot">★</div><b>Étoiles</b><span>Niveau d'étoiles</span></div>
+      <div class="item"><div class="dot">Év</div><b>Éveil</b><span>Éveil souhaité</span></div>
+      <div class="item"><div class="dot">Co</div><b>Compétences</b><span>Au choix</span></div>
+      <div class="item"><div class="dot">Él</div><b>Élément</b><span>Élément / variante</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Comment commander ?</h2>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><b>Choisissez votre pal</b><p>Espèce et variante souhaitées</p></div>
+      <div class="step"><div class="num">2</div><b>Vos caractéristiques</b><p>Passifs, IV, niveau, compétences</p></div>
+      <div class="step"><div class="num">3</div><b>Préparation</b><p>Recherche et optimisation</p></div>
+      <div class="step"><div class="num">4</div><b>Livraison</b><p>Remis directement en jeu</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Formulaire de commande</h2>
+    <p class="sub">Paiement en Dog Coins (D.C) — tarifs provisoires, à confirmer</p>
+
+    <form id="order-form">
+      <div class="row">
+        <div>
+          <label for="pseudo">Pseudo en jeu</label>
+          <input type="text" id="pseudo" placeholder="Ton pseudo Palworld" />
+        </div>
+        <div>
+          <label for="espece">Espèce souhaitée</label>
+          <input type="text" id="espece" placeholder="ex : Lamball, Direhowl, Jetragon" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="sexe">Sexe</label>
+          <select id="sexe">
+            <option>Indifférent</option>
+            <option>Mâle</option>
+            <option>Femelle</option>
+          </select>
+        </div>
+        <div>
+          <label for="passifs">Nombre de passifs</label>
+          <select id="passifs">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label for="niveau" style="display:flex; justify-content:space-between;">
+          <span>Niveau souhaité</span><span id="niveau-out">50</span>
+        </label>
+        <input type="range" id="niveau" min="1" max="60" value="50" step="1" />
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="ames">Âmes</label>
+          <select id="ames">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option><option value="5" selected>5</option>
+          </select>
+        </div>
+        <div>
+          <label for="etoiles">Étoiles</label>
+          <select id="etoiles">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4" selected>4</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="competences">Compétences au choix</label>
+          <select id="competences">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option>
+          </select>
+        </div>
+        <div>
+          <label style="margin-bottom:10px;">Options</label>
+          <div class="check-row"><input type="checkbox" id="iv" checked /> <label for="iv" style="margin:0;">IV optimisées</label></div>
+          <div class="check-row"><input type="checkbox" id="eveil" /> <label for="eveil" style="margin:0;">Éveil souhaité</label></div>
+          <div class="check-row"><input type="checkbox" id="element" /> <label for="element" style="margin:0;">Élément / variante rare</label></div>
+        </div>
+      </div>
+
+      <div id="error"></div>
+
+      <div class="total-card">
+        <div>
+          <div class="label">Prix estimé</div>
+          <div class="note">Tarifs provisoires, à confirmer</div>
+        </div>
+        <div class="amount" id="total">0 D.C</div>
+      </div>
+
+      <button type="submit" id="submit">Envoyer ma commande</button>
+
+      <div id="confirm">Commande envoyée ! Un membre de l'équipe te recontacte sur Discord.</div>
+      <div id="manual">
+        <p>L'envoi automatique n'est pas configuré. Copie ce résumé et colle-le dans le salon des commandes :</p>
+        <textarea id="manual-text" readonly></textarea>
+      </div>
+    </form>
+  </section>
+
+</div>
+
+<footer>Ô Pal Parfait — votre Pal, vos règles.</footer>
+
+<script>
+  // Remplace cette valeur par l'URL de ton webhook Discord (Paramètres du salon > Intégrations > Webhooks)
+  // pour que les commandes soient postées automatiquement dans ton serveur.
+  const DISCORD_WEBHOOK_URL = "COLLE_ICI_TON_URL_DE_WEBHOOK_DISCORD";
+
+  const els = {
+    pseudo: document.getElementById('pseudo'),
+    espece: document.getElementById('espece'),
+    sexe: document.getElementById('sexe'),
+    passifs: document.getElementById('passifs'),
+    iv: document.getElementById('iv'),
+    niveau: document.getElementById('niveau'),
+    niveauOut: document.getElementById('niveau-out'),
+    ames: document.getElementById('ames'),
+    etoiles: document.getElementById('etoiles'),
+    eveil: document.getElementById('eveil'),
+    competences: document.getElementById('competences'),
+    element: document.getElementById('element'),
+    total: document.getElementById('total'),
+    error: document.getElementById('error'),
+    confirm: document.getElementById('confirm'),
+    manual: document.getElementById('manual'),
+    manualText: document.getElementById('manual-text'),
+    submit: document.getElementById('submit'),
+    form: document.getElementById('order-form'),
+  };
+
+  function calc() {
+    let total = 40;
+    total += parseInt(els.passifs.value, 10) * 10;
+    if (els.iv.checked) total += 15;
+    total += Math.round(parseInt(els.niveau.value, 10) * 0.5);
+    total += parseInt(els.ames.value, 10) * 8;
+    total += parseInt(els.etoiles.value, 10) * 12;
+    if (els.eveil.checked) total += 10;
+    total += parseInt(els.competences.value, 10) * 6;
+    if (els.element.checked) total += 20;
+    total = Math.round(total);
+    els.total.textContent = total + ' D.C';
+    return total;
+  }
+
+  [els.passifs, els.iv, els.ames, els.etoiles, els.eveil, els.competences, els.element].forEach(function (el) {
+    el.addEventListener('change', calc);
+  });
+  els.niveau.addEventListener('input', function () {
+    els.niveauOut.textContent = els.niveau.value;
+    calc();
+  });
+
+  els.form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    els.confirm.style.display = 'none';
+    els.manual.style.display = 'none';
+
+    const pseudo = els.pseudo.value.trim();
+    const espece = els.espece.value.trim();
+    if (!pseudo || !espece) {
+      els.error.textContent = "Renseigne ton pseudo et l'espèce souhaitée avant d'envoyer.";
+      els.error.style.display = 'block';
+      return;
+    }
+    els.error.style.display = 'none';
+
+    const total = calc();
+    const summary = 'Nouvelle commande Ô Pal Parfait\\n'
+      + 'Pseudo : ' + pseudo + '\\n'
+      + 'Espèce : ' + espece + '\\n'
+      + 'Sexe : ' + els.sexe.value + '\\n'
+      + 'Niveau : ' + els.niveau.value + '\\n'
+      + 'Passifs : ' + els.passifs.value + '\\n'
+      + 'IV optimisées : ' + (els.iv.checked ? 'oui' : 'non') + '\\n'
+      + 'Âmes : ' + els.ames.value + '\\n'
+      + 'Étoiles : ' + els.etoiles.value + '\\n'
+      + 'Éveil : ' + (els.eveil.checked ? 'oui' : 'non') + '\\n'
+      + 'Compétences au choix : ' + els.competences.value + '\\n'
+      + 'Élément / variante rare : ' + (els.element.checked ? 'oui' : 'non') + '\\n'
+      + 'Total estimé : ' + total + ' D.C';
+
+    if (DISCORD_WEBHOOK_URL.indexOf('COLLE_ICI') !== -1) {
+      els.manualText.value = summary;
+      els.manual.style.display = 'block';
+      return;
+    }
+
+    els.submit.disabled = true;
+    els.submit.textContent = 'Envoi...';
+    try {
+      const res = await fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: summary })
+      });
+      if (res.ok) {
+        els.confirm.style.display = 'block';
+        els.form.reset();
+        els.niveau.value = 50;
+        els.niveauOut.textContent = '50';
+        calc();
+      } else {
+        els.manualText.value = summary;
+        els.manual.style.display = 'block';
+      }
+    } catch (err) {
+      els.manualText.value = summary;
+      els.manual.style.display = 'block';
+    }
+    els.submit.disabled = false;
+    els.submit.textContent = 'Envoyer ma commande';
+  });
+
+  calc();
+</script>
+
+</body>
+</html>
