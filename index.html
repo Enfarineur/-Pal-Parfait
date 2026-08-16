@@ -290,7 +290,7 @@
           <label for="niveau" style="display:flex; justify-content:space-between;">
             <span>Niveau souhaité</span><span id="niveau-out">50</span>
           </label>
-          <input type="range" id="niveau" min="1" max="60" value="50" step="1" style="margin-top:11px;" />
+          <input type="range" id="niveau" min="1" max="80" value="50" step="1" style="margin-top:11px;" />
         </div>
       </div>
 
@@ -303,11 +303,11 @@
 
       <div class="row">
         <div>
-          <label for="ames">Âmes</label>
-          <select id="ames">
-            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-            <option value="3">3</option><option value="4">4</option><option value="5" selected>5</option>
-          </select>
+          <label>Âmes souhaitées (jusqu'à 4)</label>
+          <div class="check-row"><input type="checkbox" id="ame-pv" /> <label for="ame-pv" style="margin:0;">PV</label></div>
+          <div class="check-row"><input type="checkbox" id="ame-attaque" /> <label for="ame-attaque" style="margin:0;">Attaque</label></div>
+          <div class="check-row"><input type="checkbox" id="ame-defense" /> <label for="ame-defense" style="margin:0;">Défense</label></div>
+          <div class="check-row"><input type="checkbox" id="ame-travail" /> <label for="ame-travail" style="margin:0;">Vitesse de travail</label></div>
         </div>
         <div>
           <label for="etoiles">Étoiles</label>
@@ -318,19 +318,18 @@
         </div>
       </div>
 
-      <div class="row">
-        <div>
-          <label for="competences">Compétences au choix</label>
-          <select id="competences">
-            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option>
-          </select>
-        </div>
-        <div>
-          <label style="margin-bottom:10px;">Options</label>
-          <div class="check-row"><input type="checkbox" id="iv" checked /> <label for="iv" style="margin:0;">IV optimisées</label></div>
-          <div class="check-row"><input type="checkbox" id="eveil" /> <label for="eveil" style="margin:0;">Éveil souhaité</label></div>
-          <div class="check-row"><input type="checkbox" id="element" /> <label for="element" style="margin:0;">Élément / variante rare</label></div>
-        </div>
+      <div style="margin-bottom:16px;">
+        <label for="fruit-search">Fruits de compétence (jusqu'à 3)</label>
+        <input type="text" id="fruit-search" placeholder="Rechercher un fruit : Flamma, Draco, Fulgura..." />
+        <div class="passif-list" id="fruit-list"></div>
+        <div class="passif-count" id="fruit-count">0 / 3 sélectionnés</div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="margin-bottom:10px;">Options</label>
+        <div class="check-row"><input type="checkbox" id="iv" checked /> <label for="iv" style="margin:0;">IV optimisées</label></div>
+        <div class="check-row"><input type="checkbox" id="eveil" /> <label for="eveil" style="margin:0;">Éveil souhaité</label></div>
+        <div class="check-row"><input type="checkbox" id="element" /> <label for="element" style="margin:0;">Élément / variante rare</label></div>
       </div>
 
       <div id="error"></div>
@@ -483,6 +482,56 @@
   const PASSIF_PRICE = 10;
   let selectedPassifs = [];
 
+  // Fruits de compétence disponibles (nom + chance d'obtention en jeu)
+  const FRUITS = [
+    ["Neutra : Tir Puissant", 7.5], ["Neutra : Boule d'Énergie", 2.33], ["Neutra : Hyper Rayon", 1.5],
+    ["Neutra : Canon à Air", 7.5], ["Neutra : Autodestruction", 2.33], ["Herba : Coupe-Rafale", 7.5],
+    ["Herba : Tornade Verte", 1.75], ["Herba : Rayon Solaire", 0.6], ["Herba : Mitraille-Graines", 7.5],
+    ["Herba : Lierre Rampant", 1.75], ["Herba : Explose-Graines", 1.75], ["Aqua : Tir Aquatique", 7.5],
+    ["Aqua : Bombao", 1.4], ["Aqua : Hydro-Laser", 0.6], ["Aqua : Jet d'Eau", 7.5],
+    ["Aqua : Tir Bulleux", 1.4], ["Aqua : Pluie Acide", 1.4], ["Flamma : Tir Enflammé", 5],
+    ["Flamma : Souffle Enflammé", 2.33], ["Flamma : Boule Enflammée", 0.75], ["Flamma : Trait de Feu", 5],
+    ["Flamma : Flammes Scindées", 5], ["Flamma : Inferno", 0.75], ["Flamma : Tempête Ardente", 2.33],
+    ["Fulgura : Onde Électrique", 3], ["Fulgura : Éclair Fulgurant", 0.6], ["Fulgura : Éclair Horizontal", 1.75],
+    ["Fulgura : Orbes de Plasma", 3], ["Fulgura : Tir Étincelant", 3], ["Fulgura : Laser Chercheur", 1.75],
+    ["Fulgura : Boule de Foudre", 3], ["Fulgura : Triple Éclair", 1.75], ["Fulgura : Coup de Foudre", 0.6],
+    ["Terra : Canon à Pierre", 5], ["Terra : Tornade de Sable", 7], ["Terra : Lance-Roche", 0.75],
+    ["Terra : Tir Boueux", 5], ["Terra : Explosion Rocailleuse", 5], ["Glacia : Missile de Glace", 7.5],
+    ["Glacia : Iceberg", 1.75], ["Glacia : Morsure du Blizzard", 0.75], ["Glacia : Coupe-Glace", 7.5],
+    ["Glacia : Souffle Givré", 1.75], ["Tenebra : Déchaînement d'Ombre", 2.5], ["Tenebra : Balle Cauchemar", 3.5],
+    ["Tenebra : Gravité Psy", 0.6], ["Tenebra : Tir Empoisonné", 2.5], ["Tenebra : Flamme Spirituelle", 2.5],
+    ["Tenebra : Laser Noir", 0.6], ["Draco : Souffle Draconique", 2.33], ["Draco : Canon Draconique", 7.5],
+    ["Draco : Déchaînement Draconique", 7.5], ["Draco : Météore Draconique", 1], ["Neutra : Lame Aérienne", 2.33],
+    ["Herba : Lierre Circulaire", 0.6], ["Herba : Multi-Coupe", 1.75], ["Aqua : Geyser", 1.4],
+    ["Aqua : Éclabousse-Mur", 0.6], ["Flamma : Mur de Flammes", 2.33], ["Flamma : Pluie Volcanique", 0.75],
+    ["Fulgura : Triple Étincelle", 1.75], ["Fulgura : Pluie Foudroyante", 0.6], ["Fulgura : Tempête Éclair", 0.6],
+    ["Terra : Tremblement", 0.75], ["Terra : Tourbillon de Sable", 0.75], ["Glacia : Trident Glacé", 0.75],
+    ["Glacia : Chute de Diamants", 0.75], ["Tenebra : Canon Noir", 2.5], ["Tenebra : Flèche Noire", 3.5],
+    ["Tenebra : Noirceur Expansive", 2.5], ["Tenebra : Apocalypse", 0.6], ["Draco : Tranche-Faisceau", 1],
+    ["Draco : Comète", 2.33], ["Draco : Canon Explosif", 2.33], ["Neutra : Explosion Sacrée", 1.5],
+    ["Flamma : Concentration de Flammes", 0.75], ["Glacia : Mur de Glace", 1.75], ["Herba : Feuille Ricochet", 0.6],
+    ["Aqua : Double-Aqua", 1.4], ["Aqua : Hydro-Tranchant", 0.6], ["Terra : Impact Rocheux", 0.75],
+    ["Fulgura : Lance Foudroyante", 3], ["Tenebra : Tir Obscur", 2.5], ["Tenebra : Légion Sombre", 0.6],
+    ["Draco : Canon Chargé", 1], ["Glacia : Grêle Tranchante", 1.75], ["Fulgura : Tonnerre Omniprésent", 0.6],
+    ["Aqua : Vague Scélérate", 0.6], ["Herba : Vent Croisé", 0.6], ["Glacia : Ère Glaciaire", 0.75],
+    ["Herba : Rafale Vent", 0.6], ["Tenebra : Douche Toxique", 0.6], ["Aqua : Éruption Aquatique", 0.6]
+  ];
+  const MAX_FRUITS = 3;
+  let selectedFruits = [];
+
+  function fruitPrice(pct) {
+    if (pct >= 5) return 5;
+    if (pct >= 2) return 10;
+    if (pct >= 1) return 18;
+    return 30;
+  }
+  function fruitTotal() {
+    return selectedFruits.reduce(function (sum, name) {
+      const f = FRUITS.find(function (x) { return x[0] === name; });
+      return sum + (f ? fruitPrice(f[1]) : 0);
+    }, 0);
+  }
+
   function renderPassifs(filter) {
     const term = (filter || '').trim().toLowerCase();
     const list = document.getElementById('passif-list');
@@ -518,6 +567,41 @@
   });
   renderPassifs('');
 
+  function renderFruits(filter) {
+    const term = (filter || '').trim().toLowerCase();
+    const list = document.getElementById('fruit-list');
+    const items = FRUITS.filter(function (f) { return f[0].toLowerCase().indexOf(term) !== -1; });
+    if (items.length === 0) {
+      list.innerHTML = '<div class="passif-empty">Aucun fruit ne correspond à cette recherche.</div>';
+      return;
+    }
+    list.innerHTML = items.map(function (f) {
+      const checked = selectedFruits.indexOf(f[0]) !== -1;
+      const disabled = !checked && selectedFruits.length >= MAX_FRUITS;
+      return '<label class="passif-item' + (disabled ? ' is-disabled' : '') + '">'
+        + '<input type="checkbox" data-name="' + f[0].replace(/"/g, '&quot;') + '" ' + (checked ? 'checked ' : '') + (disabled ? 'disabled ' : '') + '/>'
+        + '<span><b>' + f[0] + '</b><span>Chance ' + f[1] + '% · ' + fruitPrice(f[1]) + ' D.C</span></span>'
+        + '</label>';
+    }).join('');
+    list.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        const name = cb.getAttribute('data-name');
+        if (cb.checked) {
+          if (selectedFruits.length < MAX_FRUITS) selectedFruits.push(name);
+        } else {
+          selectedFruits = selectedFruits.filter(function (n) { return n !== name; });
+        }
+        document.getElementById('fruit-count').textContent = selectedFruits.length + ' / ' + MAX_FRUITS + ' sélectionnés';
+        renderFruits(document.getElementById('fruit-search').value);
+        calc();
+      });
+    });
+  }
+  document.getElementById('fruit-search').addEventListener('input', function () {
+    renderFruits(this.value);
+  });
+  renderFruits('');
+
   const els = {
     pseudo: document.getElementById('pseudo'),
     espece: document.getElementById('espece'),
@@ -525,10 +609,12 @@
     iv: document.getElementById('iv'),
     niveau: document.getElementById('niveau'),
     niveauOut: document.getElementById('niveau-out'),
-    ames: document.getElementById('ames'),
+    amePv: document.getElementById('ame-pv'),
+    ameAttaque: document.getElementById('ame-attaque'),
+    ameDefense: document.getElementById('ame-defense'),
+    ameTravail: document.getElementById('ame-travail'),
     etoiles: document.getElementById('etoiles'),
     eveil: document.getElementById('eveil'),
-    competences: document.getElementById('competences'),
     element: document.getElementById('element'),
     total: document.getElementById('total'),
     error: document.getElementById('error'),
@@ -539,22 +625,31 @@
     form: document.getElementById('order-form'),
   };
 
+  function selectedAmes() {
+    const ames = [];
+    if (els.amePv.checked) ames.push('PV');
+    if (els.ameAttaque.checked) ames.push('Attaque');
+    if (els.ameDefense.checked) ames.push('Défense');
+    if (els.ameTravail.checked) ames.push('Vitesse de travail');
+    return ames;
+  }
+
   function calc() {
     let total = 40;
     total += selectedPassifs.length * PASSIF_PRICE;
     if (els.iv.checked) total += 15;
     total += Math.round(parseInt(els.niveau.value, 10) * 0.5);
-    total += parseInt(els.ames.value, 10) * 8;
+    total += selectedAmes().length * 8;
     total += parseInt(els.etoiles.value, 10) * 12;
     if (els.eveil.checked) total += 10;
-    total += parseInt(els.competences.value, 10) * 6;
+    total += fruitTotal();
     if (els.element.checked) total += 20;
     total = Math.round(total);
     els.total.textContent = total + ' D.C';
     return total;
   }
 
-  [els.iv, els.ames, els.etoiles, els.eveil, els.competences, els.element].forEach(function (el) {
+  [els.iv, els.amePv, els.ameAttaque, els.ameDefense, els.ameTravail, els.etoiles, els.eveil, els.element].forEach(function (el) {
     el.addEventListener('change', calc);
   });
   els.niveau.addEventListener('input', function () {
@@ -578,6 +673,8 @@
 
     const total = calc();
     const passifsText = selectedPassifs.length > 0 ? selectedPassifs.join(', ') : 'aucun';
+    const amesText = selectedAmes().length > 0 ? selectedAmes().join(', ') : 'aucune';
+    const fruitsText = selectedFruits.length > 0 ? selectedFruits.join(', ') : 'aucun';
     const summary = 'Nouvelle commande Ô Pal Parfait\\n'
       + 'Pseudo : ' + pseudo + '\\n'
       + 'Espèce : ' + espece + '\\n'
@@ -585,10 +682,10 @@
       + 'Niveau : ' + els.niveau.value + '\\n'
       + 'Passifs (' + selectedPassifs.length + '/4) : ' + passifsText + '\\n'
       + 'IV optimisées : ' + (els.iv.checked ? 'oui' : 'non') + '\\n'
-      + 'Âmes : ' + els.ames.value + '\\n'
+      + 'Âmes : ' + amesText + '\\n'
       + 'Étoiles : ' + els.etoiles.value + '\\n'
       + 'Éveil : ' + (els.eveil.checked ? 'oui' : 'non') + '\\n'
-      + 'Compétences au choix : ' + els.competences.value + '\\n'
+      + 'Fruits de compétence (' + selectedFruits.length + '/3) : ' + fruitsText + '\\n'
       + 'Élément / variante rare : ' + (els.element.checked ? 'oui' : 'non') + '\\n'
       + 'Total estimé : ' + total + ' D.C';
 
@@ -622,6 +719,10 @@
       document.getElementById('passif-count').textContent = '0 / ' + MAX_PASSIFS + ' sélectionnés';
       document.getElementById('passif-search').value = '';
       renderPassifs('');
+      selectedFruits = [];
+      document.getElementById('fruit-count').textContent = '0 / ' + MAX_FRUITS + ' sélectionnés';
+      document.getElementById('fruit-search').value = '';
+      renderFruits('');
       calc();
     } catch (err) {
       els.manual.style.display = 'block';
