@@ -263,7 +263,7 @@
 
   <section>
     <h2>Formulaire de commande</h2>
-    <p class="sub">Paiement en Dog Coins (D.C) — tarifs provisoires, à confirmer</p>
+    <p class="sub">Paiement en Dog Coins (D.C)</p>
 
     <form id="order-form">
       <div style="margin-bottom:16px;">
@@ -342,7 +342,7 @@
       <div class="total-card">
         <div>
           <div class="label">Prix estimé</div>
-          <div class="note" id="total-note">Tarifs provisoires, à confirmer</div>
+          <div class="note" id="total-note">Sélectionnez une espèce</div>
         </div>
         <div class="amount" id="total">0 D.C</div>
       </div>
@@ -428,10 +428,11 @@
     ["Mycora", 200], ["Loomen", 150], ["Wistella", 150], ["Solenne", 150], ["Renjishi", 200],
     ["Aegidron", 220],
     // --- Pals événement Tides of Terraria ---
-    ["Gelée verte", 180], ["Gelée bleue", 180], ["Gelée rouge", 180], ["Gelée violette", 180],
-    ["Gelée lumineuse", 180], ["Gelée arc-en-ciel", 230], ["Épée envoûtée", 180],
-    ["Chauve-souris des grottes", 180], ["Chauve-souris lumineuse", 180], ["Œil de Cthulhu", 245],
-    ["Œil de démon", 180],
+    ["Gelée verte", 8], ["Gelée bleue", 8], ["Gelée rouge", 10], ["Gelée violette", 12],
+    ["Gelée lumineuse", 16], ["Gelée arc-en-ciel", 23], ["Épée envoûtée", 18],
+    ["Chauve-souris des grottes", 8], ["Chauve-souris lumineuse", 12], ["Œil de Cthulhu", 45],
+    ["Œil de démon", 10],
+    ["Astralym", 500]
   ];
   let selectedEspece = null;
 
@@ -778,7 +779,7 @@
     els.total.textContent = total + ' D.C';
     els.totalNote.textContent = selectedEspece
       ? 'Remise personnalisation × ' + mult.toFixed(2) + ' (' + selectedEspece + ')'
-      : 'Tarifs provisoires, à confirmer';
+      : 'Sélectionnez une espèce';
     return total;
   }
 
