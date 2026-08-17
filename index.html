@@ -266,15 +266,20 @@
     <p class="sub">Paiement en Dog Coins (D.C) — tarifs provisoires, à confirmer</p>
 
     <form id="order-form">
-      <div class="row">
-        <div>
-          <label for="pseudo">Pseudo en jeu</label>
-          <input type="text" id="pseudo" placeholder="Ton pseudo Palworld" />
-        </div>
-        <div>
-          <label for="espece">Espèce souhaitée</label>
-          <input type="text" id="espece" placeholder="ex : Lamball, Direhowl, Jetragon" />
-        </div>
+      <div style="margin-bottom:16px;">
+        <label for="pseudo">Pseudo en jeu</label>
+        <input type="text" id="pseudo" placeholder="Ton pseudo Palworld" />
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label for="espece-search">Espèce souhaitée</label>
+        <input type="text" id="espece-search" placeholder="Rechercher un Pal : Lamball, Direhowl, Jetragon..." />
+        <div class="passif-list" id="espece-list"></div>
+        <p style="font-size:0.72rem; color:var(--text-mute); margin:6px 0 0;">
+          Le prix affiché est propre à chaque Pal, basé sur la difficulté de reproduction (nombre de combos,
+          rareté des parents). Les boss et légendaires non reproductibles sont au tarif le plus élevé
+          puisqu'ils ne s'obtiennent que par capture.
+        </p>
       </div>
 
       <div class="row">
@@ -360,6 +365,56 @@
   // Remplace cette valeur par l'URL de ton webhook Discord (Paramètres du salon > Intégrations > Webhooks)
   // pour que les commandes soient postées automatiquement dans ton serveur.
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1538483271510392852/WBr5zBPTiEODeqU1n6-3Vhs_6MYXWe9cA7U73e0XVqpRRvbcng4ClNxQR24PSLUm8qXC";
+
+  // Liste des Pals avec prix individuel (D.C), basé sur la difficulté de reproduction
+  const ESPECES = [
+    ["Lamball", 5], ["Cattiva", 5], ["Chikipi", 5], ["Lifmunk", 5], ["Fuack", 5], ["Fuack Ignis", 7],
+    ["Vixy", 5], ["Celaray", 5], ["Celaray Lux", 7], ["Cremis", 5], ["Croajiro", 5], ["Croajiro Noct", 7],
+    ["Herbil", 5], ["Teafant", 5], ["Gumoss", 5], ["Pupperai", 5], ["Clovee", 5], ["Jolthog", 5],
+    ["Jolthog Cryst", 7], ["Depresso", 5], ["Pengullet", 5], ["Pengullet Lux", 7], ["Penking", 8],
+    ["Penking Lux", 10], ["Hoocrates", 5], ["Melpaca", 5], ["Kingpaca", 8], ["Kingpaca Cryst", 10],
+    ["Daedream", 8], ["Tanzee", 8], ["Tanzee Ignis", 10], ["Nox", 8], ["Flambelle", 8], ["Rooby", 8],
+    ["Mau", 8], ["Mau Cryst", 10], ["Rushoar", 8], ["Foxparks", 8], ["Foxparks Cryst", 10],
+    ["Killamari", 8], ["Killamari Primo", 10], ["Fuddler", 8], ["Eikthyrdeer", 8], ["Eikthyrdeer Terra", 10],
+    ["Direhowl", 8], ["Caprity", 8], ["Caprity Noct", 10], ["Swee", 8], ["Sweepa", 8], ["Turtacle", 8],
+    ["Turtacle Terra", 10], ["Hangyu", 8], ["Hangyu Cryst", 10], ["Woolipop", 8], ["Woolipop Terra", 10],
+    ["Mozzarina", 8], ["Azurobe", 12], ["Azurobe Cryst", 16], ["Sparkit", 12], ["Kelpsea", 12],
+    ["Kelpsea Ignis", 16], ["Ribbuny", 12], ["Ribbuny Botan", 16], ["Jelliette", 12], ["Jellroy", 12],
+    ["Amione", 12], ["Gloopie", 12], ["Gloopie Primo", 16], ["Galeclaw", 12], ["Wispaw", 12],
+    ["Nitewing", 12], ["Tombat", 12], ["Tocotoco", 12], ["Univolt", 12], ["Univolt Cryst", 16],
+    ["Gobfin", 12], ["Gobfin Ignis", 16], ["Loupmoon", 12], ["Loupmoon Cryst", 16], ["Cawgnito", 12],
+    ["Arsox", 12], ["Muffly", 12], ["Bristla", 12], ["Cinnamoth", 18], ["Puffolt", 18], ["Elphidran", 18],
+    ["Elphidran Aqua", 23], ["Vanwyrm", 18], ["Vanwyrm Cryst", 23], ["Felbat", 18], ["Vaelet", 18],
+    ["Beegarde", 18], ["Elizabee", 18], ["Lovander", 18], ["Grintale", 18], ["Tarantriss", 18],
+    ["Polapup", 18], ["Polapup Terra", 23], ["Leezpunk", 18], ["Leezpunk Ignis", 23], ["Gorirat", 18],
+    ["Gorirat Terra", 23], ["Surfent", 18], ["Surfent Terra", 23], ["Robinquill", 18], ["Robinquill Terra", 23],
+    ["Flopie", 18], ["Wixen", 18], ["Wixen Noct", 23], ["Katress", 18], ["Katress Ignis", 23],
+    ["Helzephyr", 18], ["Helzephyr Lux", 23], ["Elgrove", 25], ["Elgrove Cryst", 33], ["Lunaris", 25],
+    ["Fenglope", 25], ["Fenglope Lux", 33], ["Dinossom", 25], ["Dinossom Lux", 33], ["Bushi", 25],
+    ["Bushi Noct", 33], ["Munchill", 25], ["Mammorest", 25], ["Mammorest Cryst", 33], ["Finsider", 25],
+    ["Finsider Ignis", 33], ["Petallia", 25], ["Petallia Ignis", 33], ["Leafan", 25], ["Incineram", 25],
+    ["Incineram Noct", 33], ["Dazzi", 25], ["Dazzi Noct", 33], ["Pyrin", 25], ["Pyrin Noct", 33],
+    ["Relaxaurus", 35], ["Relaxaurus Lux", 45], ["Foxcicle", 35], ["Beakon", 35], ["Beakon Cryst", 45],
+    ["Ghangler", 35], ["Ghangler Ignis", 45], ["Rayhound", 35], ["Rayhound Cryst", 45], ["Menasting", 35],
+    ["Menasting Terra", 45], ["Needoll", 35], ["Needoll Noct", 45], ["Reindrix", 35], ["Mossanda", 35],
+    ["Mossanda Lux", 45], ["Chillet", 35], ["Chillet Ignis", 45], ["Ragnahawk", 35], ["Moldron", 35],
+    ["Moldron Cryst", 45], ["Palumba", 35], ["Digtoise", 35], ["Broncherry", 35], ["Broncherry Aqua", 45],
+    ["Dumud", 35], ["Dumud Gild", 45], ["Braloha", 35], ["Kitsun", 45], ["Kitsun Noct", 60],
+    ["Blazehowl", 45], ["Blazehowl Noct", 60], ["Warsect", 45], ["Warsect Terra", 60], ["Frostplume", 45],
+    ["Majex", 45], ["Sibelyx", 45], ["Sibelyx Primo", 60], ["Maraith", 45], ["Shroomer", 45],
+    ["Shroomer Noct", 60], ["Icelyn", 45], ["Gildra", 45], ["Jormuntide", 60], ["Jormuntide Ignis", 80],
+    ["Suzaku", 60], ["Suzaku Aqua", 80], ["Dazemu", 45], ["Quivern", 60], ["Quivern Botan", 80],
+    ["Lullu", 45], ["Kikit", 45], ["Yakumo", 45], ["Skutlass", 45], ["Skutlass Ignis", 60],
+    ["Reptyro", 60], ["Reptyro Cryst", 80], ["Cryolinx", 70], ["Cryolinx Terra", 90], ["Wumpo", 60],
+    ["Wumpo Botan", 80], ["Astegon", 90], ["Anubis", 90], ["Sekhmet", 90], ["Blazamut", 100],
+    ["Blazamut Ryu", 150], ["Dualith", 90], ["Dualith Noct", 110], ["Grizzbolt", 110], ["Lyleen", 110],
+    ["Lyleen Noct", 130], ["Orserk", 130], ["Faleris", 100], ["Faleris Aqua", 120], ["Shadowbeak", 150],
+    ["Selyne", 150], ["Bastigor", 130], ["Shaolong", 130], ["Silvance", 130], ["Dandilord", 130],
+    ["Bellanoir", 200], ["Bellanoir Libero", 220], ["Xenolord", 200], ["Hartalis", 150], ["Paladius", 250],
+    ["Necromus", 250], ["Frostallion", 250], ["Frostallion Noct", 270], ["Neptilius", 200], ["Jetragon", 300],
+    ["Panthalus", 350]
+  ];
+  let selectedEspece = null;
 
   // Liste des passifs disponibles (nom + effet résumé)
   const PASSIFS = [
@@ -532,6 +587,34 @@
     }, 0);
   }
 
+  function renderEspeces(filter) {
+    const term = (filter || '').trim().toLowerCase();
+    const list = document.getElementById('espece-list');
+    const items = ESPECES.filter(function (e) { return e[0].toLowerCase().indexOf(term) !== -1; });
+    if (items.length === 0) {
+      list.innerHTML = '<div class="passif-empty">Aucun Pal ne correspond à cette recherche.</div>';
+      return;
+    }
+    list.innerHTML = items.map(function (e) {
+      const checked = selectedEspece === e[0];
+      return '<label class="passif-item">'
+        + '<input type="radio" name="espece-radio" data-name="' + e[0].replace(/"/g, '&quot;') + '" ' + (checked ? 'checked ' : '') + '/>'
+        + '<span><b>' + e[0] + '</b><span>' + e[1] + ' D.C</span></span>'
+        + '</label>';
+    }).join('');
+    list.querySelectorAll('input[type="radio"]').forEach(function (rb) {
+      rb.addEventListener('change', function () {
+        selectedEspece = rb.getAttribute('data-name');
+        renderEspeces(document.getElementById('espece-search').value);
+        calc();
+      });
+    });
+  }
+  document.getElementById('espece-search').addEventListener('input', function () {
+    renderEspeces(this.value);
+  });
+  renderEspeces('');
+
   function renderPassifs(filter) {
     const term = (filter || '').trim().toLowerCase();
     const list = document.getElementById('passif-list');
@@ -604,7 +687,6 @@
 
   const els = {
     pseudo: document.getElementById('pseudo'),
-    espece: document.getElementById('espece'),
     sexe: document.getElementById('sexe'),
     iv: document.getElementById('iv'),
     niveau: document.getElementById('niveau'),
@@ -625,6 +707,11 @@
     form: document.getElementById('order-form'),
   };
 
+  function especePrice() {
+    const e = ESPECES.find(function (x) { return x[0] === selectedEspece; });
+    return e ? e[1] : 0;
+  }
+
   function selectedAmes() {
     const ames = [];
     if (els.amePv.checked) ames.push('PV');
@@ -635,7 +722,7 @@
   }
 
   function calc() {
-    let total = 40;
+    let total = especePrice();
     total += selectedPassifs.length * PASSIF_PRICE;
     if (els.iv.checked) total += 15;
     total += Math.round(parseInt(els.niveau.value, 10) * 0.5);
@@ -663,9 +750,9 @@
     els.manual.style.display = 'none';
 
     const pseudo = els.pseudo.value.trim();
-    const espece = els.espece.value.trim();
+    const espece = selectedEspece;
     if (!pseudo || !espece) {
-      els.error.textContent = "Renseigne ton pseudo et l'espèce souhaitée avant d'envoyer.";
+      els.error.textContent = "Renseigne ton pseudo et choisis un Pal avant d'envoyer.";
       els.error.style.display = 'block';
       return;
     }
@@ -677,7 +764,7 @@
     const fruitsList = selectedFruits.length > 0 ? selectedFruits.map(function (n) { return '• ' + n; }).join('\\n') : '_Aucun_';
 
     const description = '**Pseudo :** ' + pseudo + '\\n'
-      + '**Espèce :** ' + espece + '\\n'
+      + '**Espèce :** ' + espece + ' (' + especePrice() + ' D.C)\\n'
       + '**Sexe :** ' + els.sexe.value + '\\n'
       + '**Niveau :** ' + els.niveau.value + '\\n\\n'
       + '**Passifs (' + selectedPassifs.length + '/4)**\\n' + passifsList + '\\n\\n'
@@ -725,6 +812,9 @@
       els.form.reset();
       els.niveau.value = 50;
       els.niveauOut.textContent = '50';
+      selectedEspece = null;
+      document.getElementById('espece-search').value = '';
+      renderEspeces('');
       selectedPassifs = [];
       document.getElementById('passif-count').textContent = '0 / ' + MAX_PASSIFS + ' sélectionnés';
       document.getElementById('passif-search').value = '';
