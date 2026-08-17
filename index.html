@@ -342,7 +342,7 @@
       <div class="total-card">
         <div>
           <div class="label">Prix estimé</div>
-          <div class="note">Tarifs provisoires, à confirmer</div>
+          <div class="note" id="total-note">Tarifs provisoires, à confirmer</div>
         </div>
         <div class="amount" id="total">0 D.C</div>
       </div>
@@ -412,129 +412,132 @@
     ["Selyne", 150], ["Bastigor", 130], ["Shaolong", 130], ["Silvance", 130], ["Dandilord", 130],
     ["Bellanoir", 200], ["Bellanoir Libero", 220], ["Xenolord", 200], ["Hartalis", 150], ["Paladius", 250],
     ["Necromus", 250], ["Frostallion", 250], ["Frostallion Noct", 270], ["Neptilius", 200], ["Jetragon", 300],
-    ["Panthalus", 350]
+    ["Panthalus", 350], ["Astralym", 500]
   ];
   let selectedEspece = null;
 
   // Liste des passifs disponibles (nom + effet résumé)
   const PASSIFS = [
-    ["Main du Démon", "Vitesse de travail +90% · Chute MEN +15%"],
-    ["Traverse-Mondes", "Vitesse de déplacement +50% · Chute de satiété +15%"],
-    ["Dieu de la Destruction", "Attaque +40% · Défense +20% · PV max -50%"],
-    ["Sage Immortel", "Chute MEN ralentie +50% · Vitesse de travail -20%"],
-    ["Rempart Sacré", "Défense +50% · Attaque -30%"],
-    ["Lame du Jugement", "Attaque +50% · Défense -30%"],
-    ["Berceau Divin", "Chute de satiété ralentie +50% · PV -20%"],
-    ["Baby-sitter", "Production d'œufs +30% (ranch) · Vitesse d'éclosion +30%"],
-    ["Colère Divine", "Attaque +30% · Défense +5%"],
-    ["Corps Adamantin", "Défense +30% · Immunité recul · Immunité projections"],
-    ["Vigueur Éternelle", "Endurance max +75% (montures)"],
-    ["Feu Éternel", "Dégâts Feu +30% · Dégâts Foudre +30%"],
-    ["Inébranlable", "MEN diminue plus lentement +20%"],
-    ["Blindage", "Immunité aux dégâts explosifs"],
-    ["Anomalie", "Restauration PV +50% · Défense +25% · Immunité Poison/Brûlure"],
-    ["Immortel", "Vol de vie +5% · Restauration PV Pals +100% · Attaque +15%"],
-    ["Envahisseur", "Dégâts Ténèbres +30% · Dégâts Dragon +30%"],
-    ["Roi des Vagues", "Vitesse de déplacement +50% sur l'eau"],
-    ["Grand Prince", "Objets obtenus +100%"],
-    ["Légende", "Attaque +20% · Défense +20% · Vitesse +20%"],
-    ["Légèreté", "Sauts en monture +1"],
-    ["Chanceux", "Attaque +15% · Défense +15% · Vitesse de travail +20%"],
-    ["Trophée des Flots", "Dégâts Eau +20% · Dégâts Glace +20% · Défense +20%"],
-    ["Maîtrise de la Faim", "Satiété diminue plus lentement +20%"],
-    ["Maître Éleveur", "Capacité de travail +2"],
-    ["Maîtrise Exceptionnelle", "Vitesse de travail +75%"],
-    ["Sauveur", "Dégâts Non Élémentaires +30% · Dégâts Plante +30%"],
-    ["Sorcière", "Dégâts Ténèbres +30% · Dégâts Glace +30%"],
-    ["Marche Céleste", "Sauts en monture +2"],
-    ["Sprinteur", "Vitesse de déplacement +30%"],
-    ["Vampire", "Absorbe des dégâts en PV · Travaille la nuit"],
-    ["Coursier Marin", "Vitesse de déplacement +40% sur l'eau"],
-    ["Appliqué", "Vitesse de travail +50%"],
-    ["Corps Robuste", "Défense +20% · Immunité recul"],
-    ["Empereur Céleste", "Dégâts Non Élémentaires +30%"],
-    ["Nutritionniste", "Satiété diminue plus lentement +15%"],
-    ["Dragon Divin", "Dégâts Dragon +30%"],
-    ["Empereur Terrestre", "Dégâts Terre +30%"],
-    ["Apprenti Éleveur", "Capacité de travail +1"],
-    ["Féroce", "Attaque +20%"],
-    ["Empereur Enflammé", "Dégâts Feu +30%"],
-    ["Ange Médecin", "Régénération PV joueur +5%"],
-    ["Empereur Glacial", "Dégâts Glace +30%"],
-    ["Infatigable", "Endurance max +50% (montures)"],
-    ["Chef d'Abattage", "Capacité d'abattage +25%"],
-    ["Seigneur des Tempêtes", "Dégâts Foudre +30%"],
-    ["Seigneur des Mers", "Dégâts Eau +30%"],
-    ["Seigneur des Enfers", "Dégâts Ténèbres +30%"],
-    ["Chef d'Extraction", "Capacité d'extraction +25%"],
-    ["Motivateur", "Productivité du joueur +25%"],
-    ["Noble", "Montant des ventes +5%"],
-    ["Philanthrope", "Vitesse de production d'œufs +100%"],
-    ["Instructeur de Tir", "Vitesse de rechargement +4%"],
-    ["Coursier", "Vitesse de déplacement +20%"],
-    ["Sérénité", "Recharge des compétences -30% · Attaque +10%"],
-    ["Généreux", "Objets obtenus +50%"],
-    ["Divinité de la Forêt", "Dégâts Plante +30%"],
-    ["Stratège de Forteresse", "Défense du joueur +10%"],
-    ["Chef d'Assaut", "Attaque du joueur +10%"],
-    ["Guide de l'effort", "Consommation d'endurance -5%"],
-    ["Acharné", "MEN diminue plus lentement +15%"],
-    ["Poids Lourd", "Défense +20% · Immunité projections"],
-    ["Impulsif", "Attaque +30% · Vitesse de travail -50%"],
-    ["Anormal", "Dégâts Non Élémentaires -10%"],
-    ["Rentre-Dedans", "Attaque +10% · Défense -10%"],
-    ["Sang de Dragon", "Dégâts Dragon +10%"],
-    ["Protection Végétale", "Dégâts Plante -10%"],
-    ["Brave", "Attaque +10%"],
-    ["Condensateur", "Dégâts Foudre +10%"],
-    ["Lumineux", "Dégâts Ténèbres -10%"],
-    ["Sang Froid", "Dégâts Glace +10%"],
-    ["Vaniteux", "Vitesse de travail +10% · Défense -10%"],
-    ["Frugal", "Satiété diminue plus lentement +10%"],
-    ["Tueur de Dragons", "Dégâts Dragon -10%"],
-    ["Parasismique", "Dégâts Terre -10%"],
-    ["Belle Fourrure", "Montant des ventes +3%"],
-    ["Force de la Nature", "Endurance max +25% (montures)"],
-    ["Fragrance Boisée", "Dégâts Plante +10%"],
-    ["Peau dure", "Défense +10%"],
-    ["Sang Chaud", "Dégâts Glace -10%"],
-    ["Trouble-Fête", "Attaque +15% · Vitesse de travail -10%"],
-    ["Hydrophile", "Dégâts Eau +10%"],
-    ["Impatient", "Recharge des compétences -15%"],
-    ["Nocturne", "Travaille la nuit, ne dort pas"],
-    ["Isolant", "Dégâts Foudre -10%"],
-    ["Masochiste", "Défense +15% · Attaque -15%"],
-    ["Vif", "Vitesse de déplacement +10%"],
-    ["Organisme Inconnu", "Attaque +10% · Réduction Feu/Foudre 15%"],
-    ["Optimiste", "MEN diminue plus lentement +10%"],
-    ["Force Tellurique", "Dégâts Terre +10%"],
-    ["Pyromane", "Dégâts Feu +10%"],
-    ["Sadique", "Attaque +15% · Défense -15%"],
-    ["Sérieux", "Vitesse de travail +20%"],
-    ["Nage Fluide", "Vitesse de déplacement +30% sur l'eau"],
-    ["Esprit Zen", "Dégâts Non Élémentaires +10%"],
-    ["Bronzage Naturel", "Dégâts Feu -10%"],
-    ["Voile des Ténèbres", "Dégâts Ténèbres +10%"],
-    ["Imperméabilité", "Dégâts Eau -10%"],
-    ["Soumis", "Vitesse de travail +30% · Attaque -30%"],
-    ["Maladroit", "Vitesse de travail -10%"],
-    ["Lâche", "Attaque -10%"],
-    ["Vulnérable aux Coups", "Défense -10%"],
-    ["Tranquille", "Recharge des compétences allongée -15%"],
-    ["Glouton", "Satiété diminue rapidement +10%"],
-    ["Pitié", "Frappe sans tuer"],
-    ["Oiseau de Nuit", "Fait des siestes régulières"],
-    ["Miteux", "Montant des ventes -10%"],
-    ["Reclus", "Endurance max -25% (montures)"],
-    ["Mentalement Instable", "MEN diminue rapidement +10%"],
-    ["Estomac sans Fond", "Satiété diminue rapidement +15%"],
-    ["Soif de Destruction", "MEN diminue rapidement +15%"],
-    ["Os fragiles", "Défense -20%"],
-    ["Pacifiste", "Attaque -20%"],
-    ["Négligent", "Vitesse de travail -30%"]
+    ["Main du Démon", "Vitesse de travail +90% · Chute MEN +15%", 2000],
+    ["Traverse-Mondes", "Vitesse de déplacement +50% · Chute de satiété +15%", 350],
+    ["Dieu de la Destruction", "Attaque +40% · Défense +20% · PV max -50%", 2000],
+    ["Sage Immortel", "Chute MEN ralentie +50% · Vitesse de travail -20%", 350],
+    ["Rempart Sacré", "Défense +50% · Attaque -30%", 150],
+    ["Lame du Jugement", "Attaque +50% · Défense -30%", 150],
+    ["Berceau Divin", "Chute de satiété ralentie +50% · PV -20%", 350],
+    ["Baby-sitter", "Production d'œufs +30% (ranch) · Vitesse d'éclosion +30%", 700],
+    ["Colère Divine", "Attaque +30% · Défense +5%", 350],
+    ["Corps Adamantin", "Défense +30% · Immunité recul · Immunité projections", 1200],
+    ["Vigueur Éternelle", "Endurance max +75% (montures)", 700],
+    ["Feu Éternel", "Dégâts Feu +30% · Dégâts Foudre +30%", 700],
+    ["Inébranlable", "MEN diminue plus lentement +20%", 150],
+    ["Blindage", "Immunité aux dégâts explosifs", 150],
+    ["Anomalie", "Restauration PV +50% · Défense +25% · Immunité Poison/Brûlure", 1200],
+    ["Immortel", "Vol de vie +5% · Restauration PV Pals +100% · Attaque +15%", 1200],
+    ["Envahisseur", "Dégâts Ténèbres +30% · Dégâts Dragon +30%", 700],
+    ["Roi des Vagues", "Vitesse de déplacement +50% sur l'eau", 350],
+    ["Grand Prince", "Objets obtenus +100%", 2000],
+    ["Légende", "Attaque +20% · Défense +20% · Vitesse +20%", 2000],
+    ["Légèreté", "Sauts en monture +1", 80],
+    ["Chanceux", "Attaque +15% · Défense +15% · Vitesse de travail +20%", 2000],
+    ["Trophée des Flots", "Dégâts Eau +20% · Dégâts Glace +20% · Défense +20%", 700],
+    ["Maîtrise de la Faim", "Satiété diminue plus lentement +20%", 150],
+    ["Maître Éleveur", "Capacité de travail +2", 150],
+    ["Maîtrise Exceptionnelle", "Vitesse de travail +75%", 2000],
+    ["Sauveur", "Dégâts Non Élémentaires +30% · Dégâts Plante +30%", 700],
+    ["Sorcière", "Dégâts Ténèbres +30% · Dégâts Glace +30%", 700],
+    ["Marche Céleste", "Sauts en monture +2", 150],
+    ["Sprinteur", "Vitesse de déplacement +30%", 350],
+    ["Vampire", "Absorbe des dégâts en PV · Travaille la nuit", 150],
+    ["Coursier Marin", "Vitesse de déplacement +40% sur l'eau", 350],
+    ["Appliqué", "Vitesse de travail +50%", 1200],
+    ["Corps Robuste", "Défense +20% · Immunité recul", 350],
+    ["Empereur Céleste", "Dégâts Non Élémentaires +30%", 350],
+    ["Nutritionniste", "Satiété diminue plus lentement +15%", 150],
+    ["Dragon Divin", "Dégâts Dragon +30%", 350],
+    ["Empereur Terrestre", "Dégâts Terre +30%", 350],
+    ["Apprenti Éleveur", "Capacité de travail +1", 80],
+    ["Féroce", "Attaque +20%", 1200],
+    ["Empereur Enflammé", "Dégâts Feu +30%", 350],
+    ["Ange Médecin", "Régénération PV joueur +5%", 80],
+    ["Empereur Glacial", "Dégâts Glace +30%", 350],
+    ["Infatigable", "Endurance max +50% (montures)", 350],
+    ["Chef d'Abattage", "Capacité d'abattage +25%", 150],
+    ["Seigneur des Tempêtes", "Dégâts Foudre +30%", 350],
+    ["Seigneur des Mers", "Dégâts Eau +30%", 350],
+    ["Seigneur des Enfers", "Dégâts Ténèbres +30%", 350],
+    ["Chef d'Extraction", "Capacité d'extraction +25%", 150],
+    ["Motivateur", "Productivité du joueur +25%", 150],
+    ["Noble", "Montant des ventes +5%", 80],
+    ["Philanthrope", "Vitesse de production d'œufs +100%", 1200],
+    ["Instructeur de Tir", "Vitesse de rechargement +4%", 80],
+    ["Coursier", "Vitesse de déplacement +20%", 150],
+    ["Sérénité", "Recharge des compétences -30% · Attaque +10%", 350],
+    ["Généreux", "Objets obtenus +50%", 1200],
+    ["Divinité de la Forêt", "Dégâts Plante +30%", 350],
+    ["Stratège de Forteresse", "Défense du joueur +10%", 150],
+    ["Chef d'Assaut", "Attaque du joueur +10%", 150],
+    ["Guide de l'effort", "Consommation d'endurance -5%", 40],
+    ["Acharné", "MEN diminue plus lentement +15%", 150],
+    ["Poids Lourd", "Défense +20% · Immunité projections", 350],
+    ["Impulsif", "Attaque +30% · Vitesse de travail -50%", 40],
+    ["Anormal", "Dégâts Non Élémentaires -10%", 40],
+    ["Rentre-Dedans", "Attaque +10% · Défense -10%", 80],
+    ["Sang de Dragon", "Dégâts Dragon +10%", 150],
+    ["Protection Végétale", "Dégâts Plante -10%", 40],
+    ["Brave", "Attaque +10%", 150],
+    ["Condensateur", "Dégâts Foudre +10%", 150],
+    ["Lumineux", "Dégâts Ténèbres -10%", 40],
+    ["Sang Froid", "Dégâts Glace +10%", 150],
+    ["Vaniteux", "Vitesse de travail +10% · Défense -10%", 80],
+    ["Frugal", "Satiété diminue plus lentement +10%", 150],
+    ["Tueur de Dragons", "Dégâts Dragon -10%", 40],
+    ["Parasismique", "Dégâts Terre -10%", 40],
+    ["Belle Fourrure", "Montant des ventes +3%", 80],
+    ["Force de la Nature", "Endurance max +25% (montures)", 150],
+    ["Fragrance Boisée", "Dégâts Plante +10%", 150],
+    ["Peau dure", "Défense +10%", 150],
+    ["Sang Chaud", "Dégâts Glace -10%", 40],
+    ["Trouble-Fête", "Attaque +15% · Vitesse de travail -10%", 80],
+    ["Hydrophile", "Dégâts Eau +10%", 150],
+    ["Impatient", "Recharge des compétences -15%", 150],
+    ["Nocturne", "Travaille la nuit, ne dort pas", 80],
+    ["Isolant", "Dégâts Foudre -10%", 40],
+    ["Masochiste", "Défense +15% · Attaque -15%", 80],
+    ["Vif", "Vitesse de déplacement +10%", 150],
+    ["Organisme Inconnu", "Attaque +10% · Réduction Feu/Foudre 15%", 150],
+    ["Optimiste", "MEN diminue plus lentement +10%", 150],
+    ["Force Tellurique", "Dégâts Terre +10%", 150],
+    ["Pyromane", "Dégâts Feu +10%", 150],
+    ["Sadique", "Attaque +15% · Défense -15%", 80],
+    ["Sérieux", "Vitesse de travail +20%", 700],
+    ["Nage Fluide", "Vitesse de déplacement +30% sur l'eau", 350],
+    ["Esprit Zen", "Dégâts Non Élémentaires +10%", 150],
+    ["Bronzage Naturel", "Dégâts Feu -10%", 40],
+    ["Voile des Ténèbres", "Dégâts Ténèbres +10%", 150],
+    ["Imperméabilité", "Dégâts Eau -10%", 40],
+    ["Soumis", "Vitesse de travail +30% · Attaque -30%", 80],
+    ["Maladroit", "Vitesse de travail -10%", 40],
+    ["Lâche", "Attaque -10%", 40],
+    ["Vulnérable aux Coups", "Défense -10%", 40],
+    ["Tranquille", "Recharge des compétences allongée -15%", 40],
+    ["Glouton", "Satiété diminue rapidement +10%", 40],
+    ["Pitié", "Frappe sans tuer", 80],
+    ["Oiseau de Nuit", "Fait des siestes régulières", 80],
+    ["Miteux", "Montant des ventes -10%", 40],
+    ["Reclus", "Endurance max -25% (montures)", 40],
+    ["Mentalement Instable", "MEN diminue rapidement +10%", 40],
+    ["Estomac sans Fond", "Satiété diminue rapidement +15%", 40],
+    ["Soif de Destruction", "MEN diminue rapidement +15%", 40],
+    ["Os fragiles", "Défense -20%", 40],
+    ["Pacifiste", "Attaque -20%", 40],
+    ["Négligent", "Vitesse de travail -30%", 40]
   ];
   const MAX_PASSIFS = 4;
-  const PASSIF_PRICE = 10;
+  function passifPrice(name) {
+    const p = PASSIFS.find(function (x) { return x[0] === name; });
+    return p ? p[2] : 0;
+  }
   let selectedPassifs = [];
 
   // Fruits de compétence disponibles (nom + chance d'obtention en jeu)
@@ -628,7 +631,7 @@
       const disabled = !checked && selectedPassifs.length >= MAX_PASSIFS;
       return '<label class="passif-item' + (disabled ? ' is-disabled' : '') + '">'
         + '<input type="checkbox" data-name="' + p[0].replace(/"/g, '&quot;') + '" ' + (checked ? 'checked ' : '') + (disabled ? 'disabled ' : '') + '/>'
-        + '<span><b>' + p[0] + '</b><span>' + p[1] + '</span></span>'
+        + '<span><b>' + p[0] + '</b><span>' + p[1] + ' · ' + p[2] + ' D.C</span></span>'
         + '</label>';
     }).join('');
     list.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
@@ -699,6 +702,7 @@
     eveil: document.getElementById('eveil'),
     element: document.getElementById('element'),
     total: document.getElementById('total'),
+    totalNote: document.getElementById('total-note'),
     error: document.getElementById('error'),
     confirm: document.getElementById('confirm'),
     manual: document.getElementById('manual'),
@@ -712,6 +716,21 @@
     return e ? e[1] : 0;
   }
 
+  // Remise sur les options de personnalisation selon la rareté du Pal choisi :
+  // plus le Pal est commun (peu cher), plus il est facile d'obtenir une bonne base
+  // à optimiser, donc la personnalisation coûte moins cher. Les Pals rares/boss
+  // n'ont quasiment pas de remise puisqu'ils sont déjà difficiles à obtenir et à reproduire.
+  function rarityMultiplier(price) {
+    if (price <= 10) return 0.35;
+    if (price <= 25) return 0.45;
+    if (price <= 45) return 0.55;
+    if (price <= 70) return 0.65;
+    if (price <= 100) return 0.75;
+    if (price <= 150) return 0.85;
+    if (price <= 250) return 0.95;
+    return 1.0;
+  }
+
   function selectedAmes() {
     const ames = [];
     if (els.amePv.checked) ames.push('PV');
@@ -722,17 +741,25 @@
   }
 
   function calc() {
-    let total = especePrice();
-    total += selectedPassifs.length * PASSIF_PRICE;
-    if (els.iv.checked) total += 15;
-    total += Math.round(parseInt(els.niveau.value, 10) * 0.5);
-    total += selectedAmes().length * 8;
-    total += parseInt(els.etoiles.value, 10) * 12;
-    if (els.eveil.checked) total += 10;
-    total += fruitTotal();
-    if (els.element.checked) total += 20;
-    total = Math.round(total);
+    const base = especePrice();
+    const mult = rarityMultiplier(base);
+
+    let customization = 0;
+    if (els.eveil.checked) customization += 6000;                     // Éveil
+    customization += Math.round(parseInt(els.niveau.value, 10) * 50); // Niveau (max 80 = 4 000 D.C)
+    customization += selectedAmes().length * 3000;                    // Âmes (par âme, max 4 = 12 000 D.C)
+    if (els.iv.checked) customization += 2500;                        // IV optimisées
+    customization += parseInt(els.etoiles.value, 10) * 550;           // Étoiles (4 étoiles = 2 200 D.C)
+    customization += selectedPassifs.reduce(function (sum, name) { return sum + passifPrice(name); }, 0); // Passifs
+    customization += fruitTotal();                                    // Fruits de compétence
+
+    const shinyPrice = els.element.checked ? 10000 : 0; // Shiny : prix fixe, non concerné par la remise pal
+
+    const total = Math.round(base + shinyPrice + customization * mult);
     els.total.textContent = total + ' D.C';
+    els.totalNote.textContent = selectedEspece
+      ? 'Remise personnalisation × ' + mult.toFixed(2) + ' (' + selectedEspece + ')'
+      : 'Tarifs provisoires, à confirmer';
     return total;
   }
 
